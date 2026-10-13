@@ -1,25 +1,99 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+
+    <title>Forgot Password · Nebula Mart Admin</title>
+
+    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/admin/img/favicon.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/admin/img/favicon-32.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/admin/img/apple-touch-icon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/admin/img/favicon.ico') }}">
+
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/tailwind.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/inline.css') }}">
+
+</head>
+
+<body class="min-h-screen auth-bg text-white">
+
+    <script src="{{ asset('assets/admin/js/admin.js') }}"></script>
+
+    <div class="min-h-screen flex items-center justify-center p-6 sm:p-12 relative overflow-hidden">
+
+        <div class="absolute -right-24 -bottom-24 w-[420px] h-[420px] rounded-full bg-accent/20 blur-3xl pointer-events-none"></div>
+
+        <section class="relative z-10 w-full flex flex-col items-center">
+
+            <div class="flex items-center gap-3 mb-8">
+                <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent to-amber-300 grid place-items-center text-[#1b1300] font-display font-extrabold text-xl tracking-tighter">NM</span>
+                <div>
+                    <p class="font-display font-extrabold text-xl">Nebula Mart</p>
+                    <p class="text-xs tracking-[.2em] uppercase text-white/50 font-bold">Admin Console</p>
+                </div>
+            </div>
+
+            <div class="w-full max-w-md bg-white text-ink rounded-[28px] p-8 sm:p-10 shadow-2xl">
+
+                <h1 class="font-display font-extrabold text-3xl tracking-tight">Forgot password? 🔑</h1>
+
+                <p class="text-ink/55 mt-2 mb-7">No problem. Enter your email address and we'll send you a link to choose a new password.</p>
+
+                {{-- Session Status (e.g. reset link sent) --}}
+                @if (session('status'))
+                    <div class="mb-5 text-sm font-medium text-success">{{ session('status') }}</div>
+                @endif
+
+                <form class="space-y-5" method="POST" action="{{ route('admin.password.email') }}">
+                    @csrf
+
+                    {{-- Email --}}
+                    <div>
+                        <label class="lbl" for="email">Email address <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <svg class="ic">
+                                <use href="#i-mail" />
+                            </svg>
+                            <input class="input" id="email" name="email" type="email" value="{{ old('email') }}" placeholder="you@example.com" required autofocus autocomplete="username">
+                        </div>
+                        @error('email')
+                            <p class="text-sm text-danger mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-full !h-12 text-base">
+                        Email password reset link
+                        <svg class="ic ic-sm">
+                            <use href="#i-chev-right" />
+                        </svg>
+                    </button>
+
+                </form>
+
+                @if (Route::has('admin.login'))
+                    <p class="text-center text-sm mt-7">
+                        <a href="{{ route('admin.login') }}" class="font-semibold text-primary hover:underline">← Back to sign in</a>
+                    </p>
+                @endif
+
+                <p class="text-center text-sm text-ink/50 mt-5 flex items-center justify-center gap-2">
+                    <svg class="ic ic-sm text-success">
+                        <use href="#i-shield" />
+                    </svg>
+                    Protected area · Authorized personnel only
+                </p>
+
+            </div>
+
+        </section>
+
     </div>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+</body>
 
-    <form method="POST" action="{{ route('admin.password.email') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+</html>

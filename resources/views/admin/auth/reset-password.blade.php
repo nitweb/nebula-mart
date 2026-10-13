@@ -1,39 +1,125 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('admin.password.store') }}">
-        @csrf
+<!doctype html>
+<html lang="en">
 
-        <!-- Password Reset Token -->
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+<head>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+    <title>Reset Password · Nebula Mart Admin</title>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/admin/img/favicon.svg') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/admin/img/favicon-32.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/admin/img/apple-touch-icon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('assets/admin/img/favicon.ico') }}">
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                                type="password"
-                                name="password_confirmation" required autocomplete="new-password" />
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/tailwind.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/inline.css') }}">
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
+</head>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+<body class="min-h-screen auth-bg text-white">
+
+    <script src="{{ asset('assets/admin/js/admin.js') }}"></script>
+
+    <div class="min-h-screen flex items-center justify-center p-6 sm:p-12 relative overflow-hidden">
+
+        <div class="absolute -right-24 -bottom-24 w-[420px] h-[420px] rounded-full bg-accent/20 blur-3xl pointer-events-none"></div>
+
+        <section class="relative z-10 w-full flex flex-col items-center">
+
+            <div class="flex items-center gap-3 mb-8">
+                <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent to-amber-300 grid place-items-center text-[#1b1300] font-display font-extrabold text-xl tracking-tighter">NM</span>
+                <div>
+                    <p class="font-display font-extrabold text-xl">Nebula Mart</p>
+                    <p class="text-xs tracking-[.2em] uppercase text-white/50 font-bold">Admin Console</p>
+                </div>
+            </div>
+
+            <div class="w-full max-w-md bg-white text-ink rounded-[28px] p-8 sm:p-10 shadow-2xl">
+
+                <h1 class="font-display font-extrabold text-3xl tracking-tight">Reset password 🔒</h1>
+
+                <p class="text-ink/55 mt-2 mb-7">Choose a new password for your admin account.</p>
+
+                <form class="space-y-5" method="POST" action="{{ route('admin.password.store') }}">
+                    @csrf
+
+                    {{-- Password Reset Token --}}
+                    <input type="hidden" name="token" value="{{ $request->route('token') }}">
+
+                    {{-- Email --}}
+                    <div>
+                        <label class="lbl" for="email">Email address <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <svg class="ic">
+                                <use href="#i-mail" />
+                            </svg>
+                            <input class="input" id="email" name="email" type="email" value="{{ old('email', $request->email) }}" placeholder="you@example.com" required autofocus autocomplete="username">
+                        </div>
+                        @error('email')
+                            <p class="text-sm text-danger mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- New Password --}}
+                    <div>
+                        <label class="lbl" for="password">New password <span class="text-danger">*</span></label>
+                        <div class="input-group relative">
+                            <svg class="ic">
+                                <use href="#i-lock" />
+                            </svg>
+                            <input class="input" id="password" name="password" type="password" required autocomplete="new-password">
+                        </div>
+                        @error('password')
+                            <p class="text-sm text-danger mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Confirm Password --}}
+                    <div>
+                        <label class="lbl" for="password_confirmation">Confirm password <span class="text-danger">*</span></label>
+                        <div class="input-group relative">
+                            <svg class="ic">
+                                <use href="#i-lock" />
+                            </svg>
+                            <input class="input" id="password_confirmation" name="password_confirmation" type="password" required autocomplete="new-password">
+                        </div>
+                        @error('password_confirmation')
+                            <p class="text-sm text-danger mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-full !h-12 text-base">
+                        Reset password
+                        <svg class="ic ic-sm">
+                            <use href="#i-chev-right" />
+                        </svg>
+                    </button>
+
+                </form>
+
+                @if (Route::has('admin.login'))
+                    <p class="text-center text-sm mt-7">
+                        <a href="{{ route('admin.login') }}" class="font-semibold text-primary hover:underline">← Back to sign in</a>
+                    </p>
+                @endif
+
+                <p class="text-center text-sm text-ink/50 mt-5 flex items-center justify-center gap-2">
+                    <svg class="ic ic-sm text-success">
+                        <use href="#i-shield" />
+                    </svg>
+                    Protected area · Authorized personnel only
+                </p>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</body>
+
+</html>

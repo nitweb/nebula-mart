@@ -1,0 +1,171 @@
+<aside id="sidebar" class="sidebar text-white flex flex-col lg:sticky lg:top-0 lg:h-screen shrink-0">
+
+    <div class="px-6 h-20 flex items-center gap-3 shrink-0">
+
+        <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-amber-300 grid place-items-center text-[#1b1300] font-display font-extrabold text-base tracking-tighter shadow-lg">NM</span>
+
+        <div class="leading-tight">
+            <p class="font-display font-extrabold text-lg tracking-tight">Nebula Mart</p>
+            <p class="text-[11px] tracking-[.18em] uppercase text-white/45 font-bold">Admin Console</p>
+        </div>
+
+        <button class="lg:hidden ml-auto icon-btn !text-white/70" data-sidebar-toggle aria-label="Close menu">
+            <svg class="ic ">
+                <use href="#i-x" />
+            </svg>
+        </button>
+
+    </div>
+
+    <nav class="flex-1 overflow-y-auto px-4 pb-6">
+
+        <p class="nav-label">Main</p>
+
+        <a href="{{ route('admin.dashboard') }}" class="nav-link active">
+            <svg class="ic ">
+                <use href="#i-home" />
+            </svg>
+            <span>Dashboard</span>
+        </a>
+
+        <p class="nav-label">Catalog</p>
+
+        <a href="products.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-box" />
+            </svg>
+            <span>Products</span>
+        </a>
+
+        <a href="categories.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-layers" />
+            </svg>
+            <span>Categories</span>
+        </a>
+
+        <a href="brands.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-award" />
+            </svg>
+            <span>Brands</span>
+        </a>
+
+        <p class="nav-label">Sales</p>
+
+        <a href="orders.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-cart" />
+            </svg>
+            <span>Orders</span>
+            <span class="nav-badge">12</span>
+        </a>
+
+        <a href="customers.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-users" />
+            </svg>
+            <span>Customers</span>
+        </a>
+
+        <a href="coupons.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-ticket" />
+            </svg>
+            <span>Coupons</span>
+        </a>
+
+        <a href="flash-deals.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-zap" />
+            </svg>
+            <span>Flash Deals</span>
+        </a>
+
+        <p class="nav-label">Content</p>
+
+        <a href="banners.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-image" />
+            </svg>
+            <span>Banners & Sliders</span>
+        </a>
+
+        <a href="pages.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-file" />
+            </svg>
+            <span>Pages</span>
+        </a>
+
+        <a href="faqs.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-help" />
+            </svg>
+            <span>FAQs</span>
+        </a>
+
+        <a href="messages.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-mail" />
+            </svg>
+            <span>Messages</span>
+            <span class="nav-badge">5</span>
+        </a>
+
+        <p class="nav-label">Insights</p>
+
+        <a href="reports.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-chart" />
+            </svg>
+            <span>Reports</span>
+        </a>
+
+        <p class="nav-label">Access Control</p>
+        <a href="roles.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-shield" />
+            </svg>
+            <span>Roles & Permissions</span>
+        </a>
+
+        <a href="staff.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-users" />
+            </svg>
+            <span>Staff Members</span>
+        </a>
+
+        <p class="nav-label">System</p>
+
+        <a href="settings.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-settings" />
+            </svg>
+            <span>Site Settings</span>
+        </a>
+
+        <a href="profile.html" class="nav-link">
+            <svg class="ic ">
+                <use href="#i-user" />
+            </svg>
+            <span>My Profile</span>
+        </a>
+
+    </nav>
+
+    <div class="p-4 shrink-0">
+        <div class="is-1 rounded-2xl p-4 glow">
+            <p class="font-display font-extrabold">View your store</p>
+            <p class="text-xs text-white/60 mt-1 mb-3">See changes live on the storefront.</p>
+            <a href="../index.html" target="_blank" class="btn btn-accent btn-sm w-full">
+                Open store
+                <svg class="ic ic-sm">
+                    <use href="#i-external" />
+                </svg>
+            </a>
+        </div>
+    </div>
+
+</aside>
