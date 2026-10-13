@@ -1,0 +1,115 @@
+<section class="max-w-7xl mx-auto px-4 lg:px-6 mt-12" aria-labelledby="h-cat" aria-roledescription="carousel">
+
+    <div class="flex items-end justify-between mb-6 gap-4">
+
+        <h2 id="h-cat" class="font-display font-extrabold text-3xl">Shop by category</h2>
+
+        <div class="flex gap-2">
+
+            <button type="button" data-cat-prev class="w-10 h-10 grid place-items-center rounded-full bg-white border border-line hover:bg-accent" aria-label="Previous categories">
+                <svg class="w-5 h-5 rotate-90">
+                    <use href="#i-chev" />
+                </svg>
+            </button>
+
+            <button type="button" data-cat-next class="w-10 h-10 grid place-items-center rounded-full bg-white border border-line hover:bg-accent" aria-label="Next categories">
+                <svg class="w-5 h-5 -rotate-90">
+                    <use href="#i-chev" />
+                </svg>
+            </button>
+
+        </div>
+
+    </div>
+
+    <ul id="cat-track" class="cat-track" data-loop="3500" data-loop-prev="[data-cat-prev]" data-loop-next="[data-cat-next]">
+
+        <li class="cat-slide">
+            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                <span class="w-16 h-16 rounded-2xl bg-primary grid place-items-center text-3xl border border-line" aria-hidden="true">⚕️</span>
+                <span class="font-bold text-sm text-center">Medical</span>
+            </a>
+        </li>
+
+        <li class="cat-slide">
+            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                <span class="w-16 h-16 rounded-2xl bg-accent grid place-items-center text-3xl border border-line" aria-hidden="true">👗</span>
+                <span class="font-bold text-sm text-center">Fashion</span>
+            </a>
+        </li>
+
+        <li class="cat-slide">
+            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                <span class="w-16 h-16 rounded-2xl bg-primary grid place-items-center text-3xl border border-line" aria-hidden="true">📱</span>
+                <span class="font-bold text-sm text-center">Electronics</span>
+            </a>
+        </li>
+
+        <li class="cat-slide">
+            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                <span class="w-16 h-16 rounded-2xl bg-accent grid place-items-center text-3xl border border-line" aria-hidden="true">🏠</span>
+                <span class="font-bold text-sm text-center">Home and Living</span>
+            </a>
+        </li>
+
+        <li class="cat-slide">
+            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                <span class="w-16 h-16 rounded-2xl bg-primary grid place-items-center text-3xl border border-line" aria-hidden="true">💄</span>
+                <span class="font-bold text-sm text-center">Beauty</span>
+            </a>
+        </li>
+
+        <li class="cat-slide">
+            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                <span class="w-16 h-16 rounded-2xl bg-accent grid place-items-center text-3xl border border-line" aria-hidden="true">🛒</span>
+                <span class="font-bold text-sm text-center">Grocery</span>
+            </a>
+        </li>
+
+        <li class="cat-slide">
+            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                <span class="w-16 h-16 rounded-2xl bg-primary grid place-items-center text-3xl border border-line" aria-hidden="true">⚽</span>
+                <span class="font-bold text-sm text-center">Sports</span>
+            </a>
+        </li>
+
+    </ul>
+
+</section>
+
+<style>
+    .cat-track {
+        display: flex;
+        gap: .75rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        padding: 2px 2px 6px
+    }
+
+    .cat-track::-webkit-scrollbar {
+        display: none
+    }
+
+    .cat-slide {
+        flex: 0 0 calc((100% - 1.5rem)/3);
+        scroll-snap-align: start
+    }
+
+    @media(min-width:640px) {
+        .cat-track {
+            gap: 1rem
+        }
+
+        .cat-slide {
+            flex-basis: calc((100% - 3rem)/4)
+        }
+    }
+
+    @media(min-width:768px) {
+        .cat-slide {
+            flex-basis: calc((100% - 5rem)/6)
+        }
+    }
+</style>
