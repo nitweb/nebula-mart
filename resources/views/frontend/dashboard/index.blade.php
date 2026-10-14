@@ -4,7 +4,7 @@
 
     <h1 class="sr-only">NEBULA MART: online shopping in Bangladesh</h1>
 
-    @include('frontend.home.01_slide')
+    @include('frontend.home.01_banner')
 
     @include('frontend.home.02_shop_by_category')
 

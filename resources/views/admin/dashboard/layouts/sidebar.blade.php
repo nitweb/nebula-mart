@@ -21,7 +21,7 @@
 
         <p class="nav-label">Main</p>
 
-        <a href="{{ route('admin.dashboard') }}" class="nav-link active">
+        <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
             <svg class="ic ">
                 <use href="#i-home" />
             </svg>
@@ -84,7 +84,7 @@
 
         <p class="nav-label">Content</p>
 
-        <a href="banners.html" class="nav-link">
+        <a href="{{ route('admin.banners.index') }}" class="nav-link {{ request()->routeIs('admin.banners.*') ? 'active' : '' }}">
             <svg class="ic ">
                 <use href="#i-image" />
             </svg>

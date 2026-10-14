@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Auth\PasswordController;
 use App\Http\Controllers\Admin\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Admin\Auth\RegisteredUserController;
 use App\Http\Controllers\Admin\Auth\VerifyEmailController;
+use App\Http\Controllers\Admin\BannerController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest:admin')
@@ -48,4 +49,6 @@ Route::middleware('auth:admin')
 
         // Custom Routes
         Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');
+        // Banner Routes
+        Route::resource('banners', BannerController::class)->except('show');
     });
