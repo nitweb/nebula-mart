@@ -1,22 +1,26 @@
 <header id="site-header" class="sticky top-0 z-50">
 
+    @php
+        $announcements = array_values(array_filter(array_map('trim', preg_split('/\R/', (string) $setting('announcement')))));
+        $storeName = $setting('store_name');
+        $storeInitials = \Illuminate\Support\Str::of($storeName)->explode(' ')->filter()->map(fn($word) => mb_substr($word, 0, 1))->take(2)->implode('');
+    @endphp
+
     <!-- Announcement marquee -->
-    <div class="bg-ink text-white overflow-hidden text-[13px] font-medium">
-        <div class="flex whitespace-nowrap marquee w-max py-2">
-            <div class="flex gap-10 pr-10 items-center">
-                <span>Pay with <b class="text-accent">cash on delivery</b></span>
-                <span class="text-primary">●</span>
-                <span>7-day easy returns on everything</span>
-                <span class="text-primary">●</span>
-            </div>
-            <div class="flex gap-10 pr-10 items-center" aria-hidden="true">
-                <span>Pay with <b class="text-accent">cash on delivery</b></span>
-                <span class="text-primary">●</span>
-                <span>7-day easy returns on everything</span>
-                <span class="text-primary">●</span>
+    @if ($announcements)
+        <div class="bg-ink text-white overflow-hidden text-[13px] font-medium">
+            <div class="flex whitespace-nowrap marquee w-max py-2">
+                @foreach ([false, true] as $isCopy)
+                    <div class="flex gap-10 pr-10 items-center" @if ($isCopy) aria-hidden="true" @endif>
+                        @foreach ($announcements as $message)
+                            <span>{{ $message }}</span>
+                            <span class="text-primary">●</span>
+                        @endforeach
+                    </div>
+                @endforeach
             </div>
         </div>
-    </div>
+    @endif
 
     <!-- Main bar -->
     <div class="bg-white border-b-4 border-line">
@@ -33,13 +37,17 @@
                 </button>
 
                 <!-- Logo -->
-                <a href="{{ url('/') }}" class="flex items-center gap-2 shrink-0" aria-label="NEBULA MART home">
-                    <span class="relative grid place-items-center w-10 h-10 lg:w-11 lg:h-11 rounded-xl bg-primary -rotate-6">
-                        <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-accent border border-white"></span>
-                        <span class="absolute -bottom-1 -left-1 w-3 h-3 rounded-full bg-primary border border-white"></span>
-                        <span class="logo-mark font-display font-extrabold text-white">NM</span>
-                    </span>
-                    <span class="font-display font-extrabold text-2xl lg:text-[28px] tracking-tight">NEBULA MART</span>
+                <a href="{{ url('/') }}" class="flex items-center gap-2 shrink-0" aria-label="{{ $storeName }} home">
+                    @if ($setting('logo_header'))
+                        <img src="{{ asset($setting('logo_header')) }}" alt="{{ $storeName }}" class="h-10 lg:h-12 w-auto">
+                    @else
+                        <span class="relative grid place-items-center w-10 h-10 lg:w-11 lg:h-11 rounded-xl bg-primary -rotate-6">
+                            <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-accent border border-white"></span>
+                            <span class="absolute -bottom-1 -left-1 w-3 h-3 rounded-full bg-primary border border-white"></span>
+                            <span class="logo-mark font-display font-extrabold text-white">{{ $storeInitials }}</span>
+                        </span>
+                        <span class="font-display font-extrabold text-2xl lg:text-[28px] tracking-tight">{{ $storeName }}</span>
+                    @endif
                 </a>
 
                 <!-- Search (desktop) -->

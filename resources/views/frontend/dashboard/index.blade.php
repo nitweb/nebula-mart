@@ -1,8 +1,7 @@
 @extends('frontend.dashboard.dashboard')
-@section('frontend_title', 'NEBULA MART | Online Shopping in Bangladesh: Fashion, Electronics, Beauty')
 @section('frontend_contents')
 
-    <h1 class="sr-only">NEBULA MART: online shopping in Bangladesh</h1>
+    <h1 class="sr-only">{{ $setting('store_name') }}: online shopping in Bangladesh</h1>
 
     @include('frontend.home.01_banner')
 

@@ -1,12 +1,13 @@
 /* NEBULA MART: floating contact launcher (Call + WhatsApp + Messenger), expands from one button */
 (function () {
   'use strict';
-  /* ---- EDIT THESE ---- */
-  var PHONE_NUMBER = '01711927829';               // hotline, digits only
-  var WHATSAPP_NUMBER = '8801711927829';          // country code + number, no + or spaces (e.g. 8801712345678)
-  var WHATSAPP_TEXT = 'Hello NEBULA MART, I need help with an order.';
-  var MESSENGER_PAGE = 'nebulamart';              // facebook page username or ID (m.me/<this>)
-  /* -------------------- */
+  /* Values come from Admin > Site Settings > Chat launcher (window.NEBULA_CHAT, set in the layout) */
+  var CFG = window.NEBULA_CHAT || {};
+  if (CFG.show === false) return;
+  var PHONE_NUMBER = CFG.phone || '';                 // hotline, digits only
+  var WHATSAPP_NUMBER = CFG.whatsapp || '';           // country code + number, no + or spaces
+  var WHATSAPP_TEXT = 'Hello ' + (CFG.name || 'NEBULA MART') + ', I need help with an order.';
+  var MESSENGER_PAGE = CFG.messenger || '';           // facebook page username or ID (m.me/<this>)
   if (document.querySelector('.chat-fab')) return;
 
   var ICON = {
@@ -26,9 +27,9 @@
   wrap.className = 'chat-fab';
   wrap.innerHTML =
     '<div class="chat-fab__list" id="chat-fab-list" role="group" aria-label="Contact options">' +
-    item('chat-fab__call', 'tel:' + PHONE_NUMBER, 'Call us', 'call', false, false) +
-    item('chat-fab__wa', 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(WHATSAPP_TEXT), 'WhatsApp', 'wa', false, true) +
-    item('chat-fab__ms', 'https://m.me/' + encodeURIComponent(MESSENGER_PAGE), 'Messenger', 'ms', false, true) +
+    (PHONE_NUMBER ? item('chat-fab__call', 'tel:' + PHONE_NUMBER, 'Call us', 'call', false, false) : '') +
+    (WHATSAPP_NUMBER ? item('chat-fab__wa', 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(WHATSAPP_TEXT), 'WhatsApp', 'wa', false, true) : '') +
+    (MESSENGER_PAGE ? item('chat-fab__ms', 'https://m.me/' + encodeURIComponent(MESSENGER_PAGE), 'Messenger', 'ms', false, true) : '') +
     '</div>' +
     '<button type="button" class="chat-fab__toggle" aria-expanded="false" aria-controls="chat-fab-list" aria-label="Contact us">' +
     '<span class="chat-fab__tip chat-fab__tip--hide">Hide</span>' +

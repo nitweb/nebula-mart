@@ -80,7 +80,7 @@
                     </svg>
                     My profile
                 </a>
-                <a href="settings.html">
+                <a href="{{ route('admin.settings.edit') }}">
                     <svg class="ic ">
                         <use href="#i-settings" />
                     </svg>

@@ -4,33 +4,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('frontend_title')</title>
-    <meta name="description" content="Shop fashion, electronics, home, beauty and grocery online in Bangladesh. Pay with cash on delivery. Fast delivery and 7-day returns.">
-    <link rel="canonical" href="https://nitweb.github.io/nebula-mart-html/">
+    @php
+        $siteTitle = trim($__env->yieldContent('frontend_title')) ?: $setting('meta_title');
+        $siteDescription = $setting('meta_description');
+        $siteBase = rtrim($setting('canonical_domain') ?: url('/'), '/');
+        $canonicalUrl = $siteBase . request()->getPathInfo();
+        $storeName = $setting('store_name');
+        $logoUrl = $setting('logo_header') ? asset($setting('logo_header')) : null;
+        $shareImage = isset($banners) && $banners->isNotEmpty() ? $banners->first()->image_url : $logoUrl;
+        $sameAs = array_values(array_filter([$setting('facebook'), $setting('instagram'), $setting('youtube'), $setting('tiktok')]));
+        $organization = array_filter([
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => $storeName,
+            'url' => $siteBase . '/',
+            'logo' => $logoUrl,
+            'sameAs' => $sameAs ?: null,
+        ]);
+        $website = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'name' => $storeName,
+            'url' => $siteBase . '/',
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'target' => $siteBase . '/shop?q={search_term_string}',
+                'query-input' => 'required name=search_term_string',
+            ],
+        ];
+        $jsonFlags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE;
+    @endphp
+    <title>{{ $siteTitle }}</title>
+    <meta name="description" content="{{ $siteDescription }}">
+    <link rel="canonical" href="{{ $canonicalUrl }}">
     <meta name="robots" content="index,follow,max-image-preview:large">
-    <meta property="og:site_name" content="NEBULA MART">
+    <meta property="og:site_name" content="{{ $storeName }}">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="en_BD">
-    <meta property="og:title" content="NEBULA MART | Online Shopping in Bangladesh: Fashion, Electronics, Beauty">
-    <meta property="og:description" content="Shop fashion, electronics, home, beauty and grocery online in Bangladesh. Pay with cash on delivery. Fast delivery and 7-day returns.">
-    <meta property="og:url" content="https://nitweb.github.io/nebula-mart-html/">
-    <meta property="og:image" content="{{ asset('assets/frontend/images/hero/slider_01.webp') }}">
+    <meta property="og:title" content="{{ $siteTitle }}">
+    <meta property="og:description" content="{{ $siteDescription }}">
+    <meta property="og:url" content="{{ $canonicalUrl }}">
+    @if ($shareImage)
+        <meta property="og:image" content="{{ $shareImage }}">
+    @endif
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="theme-color" content="rgb(var(--color-primary))">
+    <meta name="theme-color" content="{{ $setting('color_primary') }}">
+    @if ($setting('gsc_code'))
+        <meta name="google-site-verification" content="{{ $setting('gsc_code') }}">
+    @endif
 
+    <script type="application/ld+json">{!! json_encode($organization, $jsonFlags) !!}</script>
+    <script type="application/ld+json">{!! json_encode($website, $jsonFlags) !!}</script>
     @verbatim
-        <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "NEBULA MART", "url": "https://nitweb.github.io/nebula-mart-html/", "logo": "https://nitweb.github.io/nebula-mart-html/logo.png", "sameAs": ["https://facebook.com/nebulamart", "https://instagram.com/nebulamart"]}</script>
-        <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "NEBULA MART", "url": "https://nitweb.github.io/nebula-mart-html/", "potentialAction": {"@type": "SearchAction", "target": "https://nitweb.github.io/nebula-mart-html/shop.html?q={search_term_string}", "query-input": "required name=search_term_string"}}</script>
         <script type="application/ld+json">{"@context": "https://schema.org", "@type": "ItemList", "name": "Flash deals", "itemListElement": [{"@type": "ListItem", "position": 1, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "Wireless Earbuds Pro with Noise Cancelling"}, {"@type": "ListItem", "position": 2, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "Premium Cotton Panjabi, Navy Blue"}, {"@type": "ListItem", "position": 3, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "FitPulse 2 Smartwatch, AMOLED Display"}, {"@type": "ListItem", "position": 4, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "AirLite Running Sneakers for Men"}, {"@type": "ListItem", "position": 5, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "Vitamin C Brightening Face Serum 30ml"}, {"@type": "ListItem", "position": 6, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "Non-Stick Cookware Set, 7 Pieces"}, {"@type": "ListItem", "position": 7, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "Boom Portable Bluetooth Speaker, Waterproof"}, {"@type": "ListItem", "position": 8, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "Rose Leather Handbag for Women"}]}</script>
     @endverbatim
 
-    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/frontend/images/favicon.svg') }}">
-    <meta name="theme-color" content="#0B3A8C">
+    @if ($setting('favicon'))
+        <link rel="icon" href="{{ asset($setting('favicon')) }}">
+        <link rel="shortcut icon" href="{{ asset($setting('favicon')) }}">
+    @else
+        <link rel="icon" type="image/svg+xml" href="{{ asset('assets/frontend/images/favicon.svg') }}">
+    @endif
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/variables.css') }}">
+    @include('frontend.dashboard.layouts.theme')
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/tailwind.css') }}">
     <link rel="preload" href="{{ asset('assets/frontend/fonts/inter-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="{{ asset('assets/frontend/fonts/plus-jakarta-sans-latin-800-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="{{ asset('assets/frontend/images/hero/slider_01.webp') }}" as="image" type="image/webp" fetchpriority="high">
+    @isset($banners)
+        @if ($banners->isNotEmpty())
+            <link rel="preload" href="{{ $banners->first()->image_url }}" as="image" type="image/webp" fetchpriority="high">
+        @endif
+    @endisset
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/icons.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/common.css') }}">
@@ -48,6 +92,40 @@
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/404.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/refresh.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/extras.css') }}">
+    @if ($setting('ga_id'))
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $setting('ga_id') }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', @json($setting('ga_id')));
+        </script>
+    @endif
+    @if ($setting('pixel_id'))
+        <script>
+            ! function(f, b, e, v, n, t, s) {
+                if (f.fbq) return;
+                n = f.fbq = function() {
+                    n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                };
+                if (!f._fbq) f._fbq = n;
+                n.push = n;
+                n.loaded = !0;
+                n.version = '2.0';
+                n.queue = [];
+                t = b.createElement(e);
+                t.async = !0;
+                t.src = v;
+                s = b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t, s)
+            }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', @json($setting('pixel_id')));
+            fbq('track', 'PageView');
+        </script>
+    @endif
 </head>
 
 <body class="antialiased" data-page="home">
@@ -128,7 +206,7 @@
         <symbol id="i-tt" viewBox="0 0 24 24">
             <path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.3 2.5 2 4.2 4.5 4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
         </symbol>
-        
+
     </svg>
 
     <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] bg-primary text-white font-bold px-4 py-2 rounded-lg">
@@ -271,6 +349,15 @@
     <script src="{{ asset('assets/frontend/js/main.js') }}" defer></script>
     <script src="{{ asset('assets/frontend/js/loop-slider.js') }}" defer></script>
     <script src="{{ asset('assets/frontend/js/pages/electronics.js') }}" defer></script>
+    <script>
+        window.NEBULA_CHAT = {
+            show: @json($setting('chat_show') === '1'),
+            phone: @json(preg_replace('/\D+/', '', (string) $setting('chat_call'))),
+            whatsapp: @json(preg_replace('/\D+/', '', (string) $setting('chat_whatsapp'))),
+            messenger: @json($setting('chat_messenger')),
+            name: @json($storeName)
+        };
+    </script>
     <script src="{{ asset('assets/frontend/js/chat.js') }}" defer></script>
     <script src="{{ asset('assets/frontend/js/pages/countdown.js') }}" defer></script>
     <script src="{{ asset('assets/frontend/js/pages/about.js') }}" defer></script>

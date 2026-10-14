@@ -7,38 +7,39 @@
 
             <div class="col-span-2 md:col-span-4 lg:col-span-4">
 
+                @php
+                    $storeName = $setting('store_name');
+                    $storeInitials = \Illuminate\Support\Str::of($storeName)->explode(' ')->filter()->map(fn($word) => mb_substr($word, 0, 1))->take(2)->implode('');
+                    $socials = [['facebook', 'Facebook', 'i-fb', 'hover:bg-primary'], ['instagram', 'Instagram', 'i-ig', 'hover:bg-primary'], ['youtube', 'YouTube', 'i-yt', 'hover:bg-accent hover:text-ink'], ['tiktok', 'TikTok', 'i-tt', 'hover:bg-accent hover:text-ink']];
+                @endphp
+
                 <a href="{{ url('/') }}" class="flex items-center gap-2 mb-4">
-                    <span class="relative grid place-items-center w-11 h-11 rounded-xl bg-primary -rotate-6">
-                        <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-accent border border-line"></span>
-                        <span class="absolute -bottom-1 -left-1 w-3 h-3 rounded-full bg-primary border border-line"></span>
-                        <span class="logo-mark font-display font-extrabold">NM</span>
-                    </span>
-                    <span class="font-display font-extrabold text-3xl tracking-tight">NEBULA MART</span>
+                    @if ($setting('logo_footer'))
+                        <img src="{{ asset($setting('logo_footer')) }}" alt="{{ $storeName }}" class="h-11 w-auto">
+                    @else
+                        <span class="relative grid place-items-center w-11 h-11 rounded-xl bg-primary -rotate-6">
+                            <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-accent border border-line"></span>
+                            <span class="absolute -bottom-1 -left-1 w-3 h-3 rounded-full bg-primary border border-line"></span>
+                            <span class="logo-mark font-display font-extrabold">{{ $storeInitials }}</span>
+                        </span>
+                        <span class="font-display font-extrabold text-3xl tracking-tight">{{ $storeName }}</span>
+                    @endif
                 </a>
 
-                <p class="text-white/70 max-w-sm leading-relaxed">Fashion, gadgets, home, beauty and groceries from trusted brands, delivered across Bangladesh.</p>
+                @if ($setting('tagline'))
+                    <p class="text-white/70 max-w-sm leading-relaxed">{{ $setting('tagline') }}</p>
+                @endif
 
                 <div class="flex gap-2.5 mt-6">
-                    <a href="shop.html" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-primary grid place-items-center transition-colors" aria-label="Facebook">
-                        <svg class="w-5 h-5">
-                            <use href="#i-fb" />
-                        </svg>
-                    </a>
-                    <a href="shop.html" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-primary grid place-items-center transition-colors" aria-label="Instagram">
-                        <svg class="w-5 h-5">
-                            <use href="#i-ig" />
-                        </svg>
-                    </a>
-                    <a href="shop.html" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-accent hover:text-ink grid place-items-center transition-colors" aria-label="YouTube">
-                        <svg class="w-5 h-5">
-                            <use href="#i-yt" />
-                        </svg>
-                    </a>
-                    <a href="shop.html" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-accent hover:text-ink grid place-items-center transition-colors" aria-label="TikTok">
-                        <svg class="w-5 h-5">
-                            <use href="#i-tt" />
-                        </svg>
-                    </a>
+                    @foreach ($socials as [$key, $label, $icon, $hover])
+                        @if ($setting($key))
+                            <a href="{{ $setting($key) }}" target="_blank" rel="noopener" class="w-11 h-11 rounded-xl bg-white/10 {{ $hover }} grid place-items-center transition-colors" aria-label="{{ $label }}">
+                                <svg class="w-5 h-5">
+                                    <use href="#{{ $icon }}" />
+                                </svg>
+                            </a>
+                        @endif
+                    @endforeach
                 </div>
 
             </div>
@@ -78,10 +79,23 @@
 
             <div class="col-span-2 md:col-span-2 lg:col-span-2">
                 <h3 class="font-display font-extrabold text-lg text-accent mb-4">Contact</h3>
+                @php
+                    $phoneDigits = preg_replace('/\D+/', '', (string) $setting('phone'));
+                    $phoneLink = $phoneDigits === '' ? '' : (str_starts_with($phoneDigits, '0') ? '+88' . $phoneDigits : '+' . $phoneDigits);
+                @endphp
                 <ul class="grid gap-2.5 text-white/75 text-[15px]">
-                    <li>Hotline: <a href="tel:+8801711927829" class="text-white font-bold">01711-927829</a></li>
-                    <li><a href="mailto:hello@nebulamart.com" class="hover:text-white">hello@nebulamart.com</a></li>
-                    <li>4th floor, Razia Plaza, 184, Senpara Parbata, Dhaka 1216</li>
+                    @if ($setting('phone'))
+                        <li>Hotline: <a href="tel:{{ $phoneLink }}" class="text-white font-bold">{{ $setting('phone') }}</a></li>
+                    @endif
+                    @if ($setting('support_email'))
+                        <li><a href="mailto:{{ $setting('support_email') }}" class="hover:text-white">{{ $setting('support_email') }}</a></li>
+                    @endif
+                    @if ($setting('address'))
+                        <li>{{ $setting('address') }}</li>
+                    @endif
+                    @if ($setting('opening_hours'))
+                        <li>{{ $setting('opening_hours') }}</li>
+                    @endif
                 </ul>
             </div>
 
@@ -92,7 +106,7 @@
 
             <div class="max-w-7xl mx-auto px-4 lg:px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-5">
 
-                <p class="text-sm text-white/60 order-2 md:order-1">© <span id="year">2026</span> NEBULA MART. All rights reserved.</p>
+                <p class="text-sm text-white/60 order-2 md:order-1">© <span id="year">{{ date('Y') }}</span> {{ $setting('store_name') }}. All rights reserved.</p>
 
                 <div class="ft-badges order-1 md:order-2">
 

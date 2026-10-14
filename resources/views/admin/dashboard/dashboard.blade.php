@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/css/admin.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/css/tailwind.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/css/inline.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
 
 </head>
 
@@ -61,7 +62,47 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
+    <script>
+        window.notify = function (message, type) {
+            if (typeof Toastify === 'undefined') {
+                if (window.toast) window.toast(message, type);
+                return;
+            }
+
+            Toastify({
+                text: message,
+                duration: 4000,
+                gravity: 'top',
+                position: 'right',
+                close: true,
+                stopOnFocus: true,
+                style: {
+                    background: type === 'error' ? '#DC2626' : '#0A8F6B',
+                    borderRadius: '12px',
+                    fontWeight: '600',
+                    boxShadow: '0 14px 30px -10px rgba(0,0,0,.4)'
+                }
+            }).showToast();
+        };
+    </script>
     <script src="{{ asset('assets/admin/js/admin.js') }}"></script>
+
+    @if (session('success') || session('error') || $errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                @if (session('success'))
+                    notify(@json(session('success')), 'success');
+                @endif
+                @if (session('error'))
+                    notify(@json(session('error')), 'error');
+                @endif
+                @if ($errors->any())
+                    notify('Please fix the errors and try again.', 'error');
+                @endif
+            });
+        </script>
+    @endif
 
 </body>
 

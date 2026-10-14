@@ -14,10 +14,6 @@
         </a>
     </div>
 
-    @if (session('success'))
-        <div class="card p-4 text-success font-bold">{{ session('success') }}</div>
-    @endif
-
     <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
         @forelse ($banners as $banner)
             <article class="card overflow-hidden group">
@@ -39,10 +35,10 @@
                                 <use href="#i-edit" />
                             </svg>
                         </a>
-                        <form method="POST" action="{{ route('admin.banners.destroy', $banner) }}" onsubmit="return confirm('Delete this banner?')">
+                        <form method="POST" action="{{ route('admin.banners.destroy', $banner) }}">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="icon-btn danger">
+                            <button type="button" class="icon-btn danger" data-delete="{{ $banner->alt_text }}">
                                 <svg class="ic">
                                     <use href="#i-trash" />
                                 </svg>

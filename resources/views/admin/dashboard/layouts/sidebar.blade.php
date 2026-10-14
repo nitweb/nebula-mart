@@ -139,7 +139,7 @@
 
         <p class="nav-label">System</p>
 
-        <a href="settings.html" class="nav-link">
+        <a href="{{ route('admin.settings.edit') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
             <svg class="ic ">
                 <use href="#i-settings" />
             </svg>
@@ -159,7 +159,7 @@
         <div class="is-1 rounded-2xl p-4 glow">
             <p class="font-display font-extrabold">View your store</p>
             <p class="text-xs text-white/60 mt-1 mb-3">See changes live on the storefront.</p>
-            <a href="../index.html" target="_blank" class="btn btn-accent btn-sm w-full">
+            <a href="{{ route('home') }}" target="_blank" class="btn btn-accent btn-sm w-full">
                 Open store
                 <svg class="ic ic-sm">
                     <use href="#i-external" />
