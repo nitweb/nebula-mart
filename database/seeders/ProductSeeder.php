@@ -53,7 +53,6 @@ class ProductSeeder extends Seeder
                 'compare_price' => $compare,
                 'sku' => 'NM-'.(1001 + $index),
                 'stock' => $opts['stock'] ?? 0,
-                'is_flash' => $opts['flash'] ?? false,
                 'is_featured' => $opts['featured'] ?? false,
                 'is_new' => $opts['new'] ?? false,
                 'status' => 'active',

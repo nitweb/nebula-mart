@@ -207,7 +207,7 @@
                 </li>
 
                 <li>
-                    <a href="shop.html" class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-extrabold text-[15px] bg-primary text-white hover:brightness-95">
+                    <a href="{{ route('flash-deals') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-extrabold text-[15px] bg-primary text-white hover:brightness-95">
                         Flash deals <span class="bg-accent text-ink text-[11px] px-1.5 py-0.5 rounded-md">HOT</span>
                     </a>
                 </li>

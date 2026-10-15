@@ -14,7 +14,7 @@ class ProductRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $flags = ['track_inventory', 'is_featured', 'is_new', 'is_flash', 'is_cod', 'is_free_delivery', 'is_returnable'];
+        $flags = ['track_inventory', 'is_featured', 'is_new', 'is_cod', 'is_free_delivery', 'is_returnable'];
         $merge = [];
 
         foreach ($flags as $flag) {

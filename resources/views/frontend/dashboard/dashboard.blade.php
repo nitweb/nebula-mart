@@ -89,7 +89,7 @@
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/track.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/404.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/refresh.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/extras.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/extras.css') }}?v={{ filemtime(public_path('assets/frontend/css/pages/extras.css')) }}">
     @if ($setting('ga_id'))
         <script async src="https://www.googletagmanager.com/gtag/js?id={{ $setting('ga_id') }}"></script>
         <script>
@@ -357,7 +357,7 @@
         };
     </script>
     <script src="{{ asset('assets/frontend/js/chat.js') }}" defer></script>
-    <script src="{{ asset('assets/frontend/js/pages/countdown.js') }}" defer></script>
+    <script src="{{ asset('assets/frontend/js/pages/countdown.js') }}?v={{ filemtime(public_path('assets/frontend/js/pages/countdown.js')) }}" defer></script>
     <script src="{{ asset('assets/frontend/js/pages/about.js') }}" defer></script>
     <script src="{{ asset('assets/frontend/js/pages/auth.js') }}" defer></script>
     <script src="{{ asset('assets/frontend/js/pages/checkout.js') }}" defer></script>

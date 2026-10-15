@@ -75,7 +75,7 @@
             <span>Coupons</span>
         </a>
 
-        <a href="flash-deals.html" class="nav-link">
+        <a href="{{ route('admin.flash-deals.index') }}" class="nav-link {{ request()->routeIs('admin.flash-deals.*') ? 'active' : '' }}">
             <svg class="ic ">
                 <use href="#i-zap" />
             </svg>

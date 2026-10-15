@@ -12,6 +12,14 @@
     $description = $product->meta_description ?: ($product->short_description ?: \Illuminate\Support\Str::limit(strip_tags((string) $product->description), 155));
     $inStock = $product->in_stock;
     $stockTotal = $product->stock_total;
+    $flashItem = $product->flash_item;
+    $flashPercent = $flashItem ? (float) $flashItem->discount_percent : 0;
+    $flashEnd = $flashItem?->deal->windowAt()[1];
+    $basePrice = (float) ($default?->price ?? $product->price);
+    $shownPrice = $product->flashPrice($basePrice);
+    $oldPrice = max((float) ($product->compare_price ?? 0), $flashItem ? $basePrice : 0);
+    $hasOld = $oldPrice > $shownPrice;
+    $badgePercent = $hasOld ? (int) round((1 - $shownPrice / $oldPrice) * 100) : 0;
 @endphp
 
 @section('frontend_title', $title)
@@ -32,7 +40,7 @@
             '@type' => 'Offer',
             'url' => $product->url,
             'priceCurrency' => 'BDT',
-            'price' => $product->price,
+            'price' => $product->display_price,
             'availability' => $inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
         ],
     ]), JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
@@ -57,8 +65,8 @@
             <div>
                 <figure id="zoom-fig" class="relative rounded-3xl overflow-hidden border border-line bg-primary-soft shadow-sm" data-zoom>
                     <img id="main-img" src="{{ $product->cover_url }}" alt="{{ $product->name }}" data-alt="{{ $product->name }}" width="900" height="900" fetchpriority="high" class="w-full aspect-square object-cover">
-                    @if ($product->discount_percent)
-                        <span id="p-badge" class="absolute top-4 left-4 bg-primary text-white font-extrabold px-3 py-1.5 rounded-xl">-{{ $product->discount_percent }}%</span>
+                    @if ($badgePercent)
+                        <span id="p-badge" class="absolute top-4 left-4 {{ $flashItem ? 'bg-accent text-ink' : 'bg-primary text-white' }} font-extrabold px-3 py-1.5 rounded-xl">-{{ $badgePercent }}%</span>
                     @endif
                 </figure>
                 @if ($images->count() > 1)
@@ -99,11 +107,40 @@
                 </div>
 
                 <div class="mt-5 flex flex-wrap items-baseline gap-3">
-                    <span id="p-price" class="font-display font-extrabold text-4xl text-primary">৳{{ $fmt($default?->price ?? $product->price) }}</span>
-                    @php $shownPrice = $default?->price ?? $product->price; @endphp
-                    <s id="p-old" class="text-xl text-ink/50" @if (! $product->compare_price || $product->compare_price <= $shownPrice) hidden @endif>৳{{ $fmt($product->compare_price ?? 0) }}</s>
-                    <span id="p-save" class="bg-accent px-2.5 py-1 rounded-lg font-extrabold text-sm" @if (! $product->compare_price || $product->compare_price <= $shownPrice) hidden @endif>Save ৳{{ $fmt(max(0, ($product->compare_price ?? 0) - $shownPrice)) }}</span>
+                    <span id="p-price" class="font-display font-extrabold text-4xl text-primary">৳{{ $fmt($shownPrice) }}</span>
+                    <s id="p-old" class="text-xl text-ink/50" @if (! $hasOld) hidden @endif>৳{{ $fmt($oldPrice) }}</s>
+                    <span id="p-save" class="bg-accent px-2.5 py-1 rounded-lg font-extrabold text-sm" @if (! $hasOld) hidden @endif>Save ৳{{ $fmt(max(0, $oldPrice - $shownPrice)) }}</span>
                 </div>
+
+                @if ($flashItem)
+                    <div class="fdeal">
+                        <div class="fdeal__head">
+                            <span class="fdeal__tag">
+                                <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M13 2 4 14h6l-1 8 9-12h-6z" /></svg>
+                                Flash deal
+                            </span>
+                            <span class="fdeal__title">{{ $flashItem->deal->title }}</span>
+                            @if ($badgePercent)
+                                <span class="fdeal__off">{{ $badgePercent }}% off</span>
+                            @endif
+                        </div>
+                        <div class="fdeal__body">
+                            @if ($flashItem->deal->show_countdown)
+                                <div class="fdeal__timer" data-end="{{ $flashEnd->getTimestamp() * 1000 }}" role="timer" aria-live="off" aria-label="Time left in this flash deal">
+                                    <span class="fdeal__label">Ends in</span>
+                                    <span class="fdeal__unit"><b data-fc="h">00</b><small>h</small></span>
+                                    <i class="fdeal__colon" aria-hidden="true">:</i>
+                                    <span class="fdeal__unit"><b data-fc="m">00</b><small>m</small></span>
+                                    <i class="fdeal__colon" aria-hidden="true">:</i>
+                                    <span class="fdeal__unit fdeal__unit--s"><b data-fc="s">00</b><small>s</small></span>
+                                </div>
+                            @endif
+                            @if ($flashItem->deal_stock)
+                                <span class="fdeal__stock">Only <b>{{ $flashItem->deal_stock }}</b> left at this price</span>
+                            @endif
+                        </div>
+                    </div>
+                @endif
 
                 @if ($product->short_description)
                     <p class="mt-5 text-ink/80 leading-relaxed">{{ $product->short_description }}</p>
@@ -144,7 +181,7 @@
                         <button type="button" id="q+" class="px-4 py-3" aria-label="Increase quantity">+</button>
                     </div>
                     <button type="button" id="add-main" class="addcart flex-1 min-w-[150px] bg-primary hover:bg-primary-dark text-white font-extrabold rounded-xl py-3.5 border border-line shadow-sm"
-                        data-id="{{ $product->id }}" data-name="{{ $product->name }}" data-img="{{ $product->cover_url }}" data-price="{{ $shownPrice }}" data-old="{{ $product->compare_price > $shownPrice ? $product->compare_price : '' }}" data-variant="Standard" @disabled(! $inStock)>
+                        data-id="{{ $product->id }}" data-name="{{ $product->name }}" data-img="{{ $product->cover_url }}" data-price="{{ $shownPrice }}" data-old="{{ $hasOld ? $oldPrice : '' }}" data-variant="Standard" @disabled(! $inStock)>
                         {{ $inStock ? 'Add to cart' : 'Out of stock' }}
                     </button>
                     <button type="button" id="buy-now" class="flex-1 min-w-[130px] text-center bg-accent font-extrabold rounded-xl py-3.5 border border-line shadow-sm" @disabled(! $inStock)>Buy now</button>
@@ -240,7 +277,7 @@
 <script>
     (function () {
         var variants = @json($variantData);
-        var base = { price: {{ (float) $product->price }}, old: {{ (float) ($product->compare_price ?? 0) }}, stock: {{ $stockTotal }}, track: {{ $product->track_inventory ? 'true' : 'false' }}, low: {{ (int) $product->getRawOriginal('low_stock') }} };
+        var base = { price: {{ (float) $product->price }}, old: {{ (float) ($product->compare_price ?? 0) }}, flash: {{ $flashPercent }}, stock: {{ $stockTotal }}, track: {{ $product->track_inventory ? 'true' : 'false' }}, low: {{ (int) $product->getRawOriginal('low_stock') }} };
         var add = document.getElementById('add-main');
         var buy = document.getElementById('buy-now');
         var chip = document.getElementById('stock-chip');
@@ -260,21 +297,23 @@
             if (size) label.push('Size: ' + size);
             if (color) label.push('Color: ' + color);
 
-            var p = v && v.price !== null ? v.price : base.price;
+            var orig = v && v.price !== null ? Number(v.price) : base.price;
+            var p = base.flash ? Math.round(orig * (1 - base.flash / 100) * 100) / 100 : orig;
+            var ref = base.flash ? Math.max(base.old, orig) : base.old;
             var stock = v ? v.stock : base.stock;
             var available = !base.track || stock > 0;
             if (variants.length && !v) available = false;
 
             price.textContent = money(p);
-            var hasOld = base.old > p;
+            var hasOld = ref > p;
             old.hidden = save.hidden = !hasOld;
-            if (hasOld) { old.textContent = money(base.old); save.textContent = 'Save ' + money(base.old - p); }
-            if (badge) { badge.hidden = !hasOld; if (hasOld) badge.textContent = '-' + Math.round((1 - p / base.old) * 100) + '%'; }
+            if (hasOld) { old.textContent = money(ref); save.textContent = 'Save ' + money(ref - p); }
+            if (badge) { badge.hidden = !hasOld; if (hasOld) badge.textContent = '-' + Math.round((1 - p / ref) * 100) + '%'; }
 
             chip.textContent = !available ? 'Out of stock' : (base.track && stock <= base.low ? 'Only ' + stock + ' left' : 'In stock');
 
             add.dataset.price = p;
-            add.dataset.old = hasOld ? base.old : '';
+            add.dataset.old = hasOld ? ref : '';
             add.dataset.variant = label.length ? label.join(' / ') : 'Standard';
             add.disabled = buy.disabled = !available;
             add.textContent = available ? 'Add to cart' : 'Out of stock';

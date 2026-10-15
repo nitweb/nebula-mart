@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Frontend\FlashDealController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\ProductController as StorefrontProductController;
 use App\Http\Controllers\Frontend\ShopController;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
+Route::get('/flash-deals', [FlashDealController::class, 'index'])->name('flash-deals');
 Route::get('/category/{category:slug}', [ShopController::class, 'category'])->name('category.show');
 Route::get('/brand/{brand:slug}', [ShopController::class, 'brand'])->name('brand.show');
 Route::get('/product/{product:slug}', [StorefrontProductController::class, 'show'])->name('product.show');

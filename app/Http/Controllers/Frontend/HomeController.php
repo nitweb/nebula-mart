@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\FlashDeal;
 use App\Models\Product;
 use Illuminate\View\View;
 
@@ -30,11 +31,14 @@ class HomeController extends Controller
             ->take(4)
             ->values();
 
+        $flashDeal = FlashDeal::live()->firstWhere('show_on_home', true);
+
         return view('frontend.dashboard.index', [
             'banners' => Banner::active()->get(),
             'homeCategories' => $homeCategories,
             'homeBrands' => Brand::active()->featured()->get(),
-            'flashProducts' => Product::active()->where('is_flash', true)->with(self::RELATIONS)->latest('id')->limit(8)->get(),
+            'flashDeal' => $flashDeal,
+            'flashProducts' => $flashDeal?->activeProducts(8) ?? collect(),
             'featuredProducts' => Product::active()->where('is_featured', true)->with(self::RELATIONS)->latest('id')->limit(8)->get(),
             'newProducts' => Product::active()->where('is_new', true)->with(self::RELATIONS)->latest('id')->limit(8)->get(),
             'categorySections' => $categorySections,

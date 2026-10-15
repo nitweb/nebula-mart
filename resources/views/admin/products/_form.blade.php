@@ -217,10 +217,6 @@
                         <div><p class="font-semibold">New arrival</p></div>
                         <label class="switch"><input type="checkbox" name="is_new" value="1" @checked($flag('is_new', true))><i></i></label>
                     </div>
-                    <div class="flex items-center justify-between gap-4">
-                        <div><p class="font-semibold">Include in flash deals</p></div>
-                        <label class="switch"><input type="checkbox" name="is_flash" value="1" @checked($flag('is_flash', false))><i></i></label>
-                    </div>
                 </div>
             </div>
         </section>
