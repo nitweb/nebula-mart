@@ -9,6 +9,8 @@
 
     @include('frontend.home.03_flash_deals')
 
+    @include('frontend.home.04_top_brands')
+
     <section class="max-w-7xl mx-auto px-4 lg:px-6 mt-14" aria-labelledby="h-medical">
         <div class="flex items-end justify-between mb-6 gap-4">
             <h2 id="h-medical" class="font-display font-extrabold text-3xl">Medical</h2>

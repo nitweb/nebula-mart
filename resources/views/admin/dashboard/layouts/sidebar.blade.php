@@ -44,7 +44,7 @@
             <span>Categories</span>
         </a>
 
-        <a href="brands.html" class="nav-link">
+        <a href="{{ route('admin.brands.index') }}" class="nav-link {{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
             <svg class="ic ">
                 <use href="#i-award" />
             </svg>
