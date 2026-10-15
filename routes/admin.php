@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Auth\VerifyEmailController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +58,9 @@ Route::middleware('auth:admin')
         // Category Routes
         Route::patch('categories/{category}/toggle', [CategoryController::class, 'toggle'])->name('categories.toggle');
         Route::resource('categories', CategoryController::class)->except('show');
+
+        Route::patch('products/{product}/toggle', [ProductController::class, 'toggle'])->name('products.toggle');
+        Route::resource('products', ProductController::class)->except('show');
 
         Route::patch('brands/{brand}/toggle', [BrandController::class, 'toggle'])->name('brands.toggle');
         Route::resource('brands', BrandController::class)->except('show');

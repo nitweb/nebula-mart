@@ -107,8 +107,9 @@
       var c = RD.cart(), a = b.closest('article'), qv = a && a.querySelector('.qv'), p = null, main = b.id === 'add-main';
       if (qv) { var d = qv.dataset; p = { id: d.name, name: d.name, img: d.img, variant: 'Standard', price: num(d.price), old: num(d.old) || num(d.price) } }
       else if (main) {
-        var B = RD.DEF[0], col = document.querySelector('input[name=color]:checked'), lb = col && col.nextElementSibling;
-        p = { id: B.id, name: B.name, img: B.img, variant: lb ? 'Size: ' + lb.textContent.trim() : B.variant, price: B.price, old: B.old }
+        if (b.dataset.name) { var dv = b.dataset; p = { id: dv.id, name: dv.name, img: dv.img, variant: dv.variant || 'Standard', price: num(dv.price), old: num(dv.old) || num(dv.price) } }
+        else { var B = RD.DEF[0], col = document.querySelector('input[name=color]:checked'), lb = col && col.nextElementSibling;
+        p = { id: B.id, name: B.name, img: B.img, variant: lb ? 'Size: ' + lb.textContent.trim() : B.variant, price: B.price, old: B.old } }
       }
       if (!p) return;
       var f = c.filter(function (x) { return x.name === p.name && (!main || x.variant === p.variant) })[0];
@@ -157,7 +158,7 @@
     run('product', function () {
       (function () {
         var m = document.getElementById('main-img'), ts = document.querySelectorAll('.thumb');
-        ts.forEach(function (t, i) { t.onclick = function () { m.src = t.dataset.full; m.alt = 'AXIS-Y Glow Serum, view ' + (i + 1); ts.forEach(function (x) { x.classList.replace('border-primary', 'border-line') }); t.classList.replace('border-line', 'border-primary') } });
+        ts.forEach(function (t, i) { t.onclick = function () { m.src = t.dataset.full; m.alt = (m.dataset.alt || 'Product') + ', view ' + (i + 1); ts.forEach(function (x) { x.classList.replace('border-primary', 'border-line') }); t.classList.replace('border-line', 'border-primary') } });
         var q = document.getElementById('qty');
         document.getElementById('q-').onclick = function () { q.value = Math.max(1, +q.value - 1) }; document.getElementById('q+').onclick = function () { q.value = Math.min(10, +q.value + 1) };
         var tabs = [].slice.call(document.querySelectorAll('.tab'));

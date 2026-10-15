@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @php
         $siteTitle = trim($__env->yieldContent('frontend_title')) ?: $setting('meta_title');
-        $siteDescription = $setting('meta_description');
+        $siteDescription = trim($__env->yieldContent('frontend_description')) ?: $setting('meta_description');
         $siteBase = rtrim($setting('canonical_domain') ?: url('/'), '/');
         $canonicalUrl = $siteBase . request()->getPathInfo();
         $storeName = $setting('store_name');
         $logoUrl = $setting('logo_header') ? asset($setting('logo_header')) : null;
-        $shareImage = isset($banners) && $banners->isNotEmpty() ? $banners->first()->image_url : $logoUrl;
+        $shareImage = trim($__env->yieldContent('frontend_image')) ?: (isset($banners) && $banners->isNotEmpty() ? $banners->first()->image_url : $logoUrl);
         $sameAs = array_values(array_filter([$setting('facebook'), $setting('instagram'), $setting('youtube'), $setting('tiktok')]));
         $organization = array_filter([
             '@context' => 'https://schema.org',
@@ -55,9 +55,7 @@
 
     <script type="application/ld+json">{!! json_encode($organization, $jsonFlags) !!}</script>
     <script type="application/ld+json">{!! json_encode($website, $jsonFlags) !!}</script>
-    @verbatim
-        <script type="application/ld+json">{"@context": "https://schema.org", "@type": "ItemList", "name": "Flash deals", "itemListElement": [{"@type": "ListItem", "position": 1, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "Wireless Earbuds Pro with Noise Cancelling"}, {"@type": "ListItem", "position": 2, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "Premium Cotton Panjabi, Navy Blue"}, {"@type": "ListItem", "position": 3, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "FitPulse 2 Smartwatch, AMOLED Display"}, {"@type": "ListItem", "position": 4, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "AirLite Running Sneakers for Men"}, {"@type": "ListItem", "position": 5, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "Vitamin C Brightening Face Serum 30ml"}, {"@type": "ListItem", "position": 6, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "Non-Stick Cookware Set, 7 Pieces"}, {"@type": "ListItem", "position": 7, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "Boom Portable Bluetooth Speaker, Waterproof"}, {"@type": "ListItem", "position": 8, "url": "https://nitweb.github.io/nebula-mart-html/product.html", "name": "Rose Leather Handbag for Women"}]}</script>
-    @endverbatim
+    @stack('jsonld')
 
     @if ($setting('favicon'))
         <link rel="icon" href="{{ asset($setting('favicon')) }}">
@@ -128,7 +126,7 @@
     @endif
 </head>
 
-<body class="antialiased" data-page="home">
+<body class="antialiased" data-page="@yield('page', 'home')">
 
     <!-- SVG ICON SPRITE -->
     <svg xmlns="http://www.w3.org/2000/svg" class="hidden">
@@ -369,6 +367,7 @@
     <script src="{{ asset('assets/frontend/js/pages/success.js') }}" defer></script>
     <script src="{{ asset('assets/frontend/js/pages/track.js') }}" defer></script>
     <script src="{{ asset('assets/frontend/js/pages/zoom.js') }}" defer></script>
+    @stack('scripts')
 </body>
 
 </html>

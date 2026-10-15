@@ -30,7 +30,7 @@
 
         <p class="nav-label">Catalog</p>
 
-        <a href="products.html" class="nav-link">
+        <a href="{{ route('admin.products.index') }}" class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
             <svg class="ic ">
                 <use href="#i-box" />
             </svg>
