@@ -47,11 +47,9 @@
             <nav class="lg:col-span-2" aria-label="Shop">
                 <h3 class="font-display font-extrabold text-lg text-accent mb-4">Shop</h3>
                 <ul class="grid gap-2.5 text-white/75">
-                    <li><a href="shop.html" class="hover:text-white">Fashion</a></li>
-                    <li><a href="shop.html" class="hover:text-white">Electronics</a></li>
-                    <li><a href="shop.html" class="hover:text-white">Home &amp; Living</a></li>
-                    <li><a href="shop.html" class="hover:text-white">Beauty</a></li>
-                    <li><a href="shop.html" class="hover:text-white">Grocery</a></li>
+                    @foreach ($menuCategories as $category)
+                        <li><a href="{{ $category->url }}" class="hover:text-white">{{ $category->name }}</a></li>
+                    @endforeach
                     <li><a href="shop.html" class="hover:text-white">Flash deals</a></li>
                 </ul>
             </nav>

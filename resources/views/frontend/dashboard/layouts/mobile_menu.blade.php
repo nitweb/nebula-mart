@@ -23,91 +23,26 @@
 
         <ul class="px-4 pb-6 divide-y-2 divide-line font-bold">
 
-            <li><a href="shop.html" class="block py-3.5">Medical</a></li>
-
-            <li>
-                <details>
-                    <summary class="flex justify-between items-center py-3.5 cursor-pointer">
-                        Fashion
-                        <svg class="chev w-5 h-5 transition-transform">
-                            <use href="#i-chev" />
-                        </svg>
-                    </summary>
-                    <ul class="pb-3 pl-3 grid gap-2.5 font-medium text-[15px]">
-                        <li><a href="shop.html">Women</a></li>
-                        <li><a href="shop.html">Men</a></li>
-                        <li><a href="shop.html">Footwear</a></li>
-                        <li><a href="shop.html">Bags &amp; accessories</a></li>
-                    </ul>
-                </details>
-            </li>
-
-            <li>
-                <details>
-                    <summary class="flex justify-between items-center py-3.5 cursor-pointer">
-                        Electronics
-                        <svg class="chev w-5 h-5 transition-transform">
-                            <use href="#i-chev" />
-                        </svg>
-                    </summary>
-                    <ul class="pb-3 pl-3 grid gap-2.5 font-medium text-[15px]">
-                        <li><a href="shop.html">Phones &amp; tablets</a></li>
-                        <li><a href="shop.html">Computing</a></li>
-                        <li><a href="shop.html">Audio</a></li>
-                        <li><a href="shop.html">Smartwatches</a></li>
-                    </ul>
-                </details>
-            </li>
-
-            <li>
-                <details>
-                    <summary class="flex justify-between items-center py-3.5 cursor-pointer">
-                        Home &amp; Living
-                        <svg class="chev w-5 h-5 transition-transform">
-                            <use href="#i-chev" />
-                        </svg>
-                    </summary>
-                    <ul class="pb-3 pl-3 grid gap-2.5 font-medium text-[15px]">
-                        <li><a href="shop.html">Furniture</a></li>
-                        <li><a href="shop.html">Kitchen</a></li>
-                        <li><a href="shop.html">Decor</a></li>
-                    </ul>
-                </details>
-            </li>
-
-            <li>
-                <details>
-                    <summary class="flex justify-between items-center py-3.5 cursor-pointer">
-                        Beauty
-                        <svg class="chev w-5 h-5 transition-transform">
-                            <use href="#i-chev" />
-                        </svg>
-                    </summary>
-                    <ul class="pb-3 pl-3 grid gap-2.5 font-medium text-[15px]">
-                        <li><a href="shop.html">Skincare</a></li>
-                        <li><a href="shop.html">Makeup</a></li>
-                        <li><a href="shop.html">Hair &amp; body</a></li>
-                    </ul>
-                </details>
-            </li>
-
-            <li>
-                <details>
-                    <summary class="flex justify-between items-center py-3.5 cursor-pointer">
-                        Grocery
-                        <svg class="chev w-5 h-5 transition-transform">
-                            <use href="#i-chev" />
-                        </svg>
-                    </summary>
-                    <ul class="pb-3 pl-3 grid gap-2.5 font-medium text-[15px]">
-                        <li><a href="shop.html">Fresh</a></li>
-                        <li><a href="shop.html">Pantry</a></li>
-                        <li><a href="shop.html">Household</a></li>
-                    </ul>
-                </details>
-            </li>
-
-            <li><a href="shop.html" class="block py-3.5">Sports</a></li>
+            @foreach ($menuCategories as $category)
+                @if ($category->children->isEmpty())
+                    <li><a href="{{ $category->url }}" class="block py-3.5">{{ $category->name }}</a></li>
+                @else
+                    <li>
+                        <details>
+                            <summary class="flex justify-between items-center py-3.5 cursor-pointer">
+                                {{ $category->name }}
+                                <svg class="chev w-5 h-5 transition-transform">
+                                    <use href="#i-chev" />
+                                </svg>
+                            </summary>
+                            <ul class="pb-3 pl-3 grid gap-2.5 font-medium text-[15px]">
+                                <li><a href="{{ $category->url }}">All {{ $category->name }}</a></li>
+                                @include('frontend.dashboard.layouts.partials.mobile_links', ['items' => $category->children])
+                            </ul>
+                        </details>
+                    </li>
+                @endif
+            @endforeach
 
             <li><a href="track.html" class="block py-3.5">Track order</a></li>
 

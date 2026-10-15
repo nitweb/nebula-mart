@@ -139,285 +139,61 @@
 
             <ul class="flex items-center gap-1 py-2">
 
-                <!-- Medical -->
-                <li>
-                    <a href="shop.html" class="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-[15px] transition-colors hover:bg-primary-soft">Medical</a>
-                </li>
-
-                <!-- Fashion -->
-                <li class="mega-item static">
-                    <button class="mega-trigger flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-[15px] transition-colors" aria-haspopup="true">
-                        Fashion
-                        <svg class="chev w-4 h-4 transition-transform">
-                            <use href="#i-chev" />
-                        </svg>
-                    </button>
-                    <div class="mega-panel absolute left-0 right-0 top-full z-40">
-                        <div class="max-w-7xl mx-auto px-6">
-                            <div class="bg-white border border-line rounded-3xl shadow-sm mt-1 p-8 grid grid-cols-12 gap-8">
-                                <div class="col-span-2">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Women</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Sarees &amp; Salwar</a></li>
-                                        <li><a href="shop.html" class="link-u">Dresses &amp; Tops</a></li>
-                                        <li><a href="shop.html" class="link-u">Kurtis</a></li>
-                                        <li><a href="shop.html" class="link-u">Handbags</a></li>
-                                        <li><a href="shop.html" class="link-u">Jewellery</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-2">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Men</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Panjabi</a></li>
-                                        <li><a href="shop.html" class="link-u">Shirts &amp; T-shirts</a></li>
-                                        <li><a href="shop.html" class="link-u">Jeans &amp; Pants</a></li>
-                                        <li><a href="shop.html" class="link-u">Watches</a></li>
-                                        <li><a href="shop.html" class="link-u">Wallets</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-2">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Footwear</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Sneakers</a></li>
-                                        <li><a href="shop.html" class="link-u">Sandals</a></li>
-                                        <li><a href="shop.html" class="link-u">Formal shoes</a></li>
-                                        <li><a href="shop.html" class="link-u">Kids' shoes</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-3">
-                                    <a href="shop.html" class="block h-full rounded-2xl bg-primary p-5 text-white relative overflow-hidden group">
-                                        <span class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-accent"></span>
-                                        <span class="relative inline-block bg-white text-primary text-xs font-bold px-2.5 py-1 rounded-full">New season</span>
-                                        <p class="relative font-display font-extrabold text-2xl leading-tight mt-3">Eid-ready outfits, up to 40% off</p>
-                                        <span class="relative inline-block mt-4 font-bold underline underline-offset-4">Shop fashion</span>
-                                    </a>
-                                </div>
-                                <div class="col-span-3">
-                                    <a href="shop.html" class="block h-full rounded-2xl bg-accent p-5 relative overflow-hidden">
-                                        <span class="absolute -left-5 -top-5 w-24 h-24 rounded-full bg-accent"></span>
-                                        <span class="relative inline-block bg-ink text-white text-xs font-bold px-2.5 py-1 rounded-full">Trending</span>
-                                        <p class="relative font-display font-extrabold text-2xl leading-tight mt-3">Sneakers under ৳2,500</p>
-                                        <span class="relative inline-block mt-4 font-bold underline underline-offset-4">See the picks</span>
-                                    </a>
+                @foreach ($menuCategories as $category)
+                    @if ($category->children->isEmpty())
+                        <li>
+                            <a href="{{ $category->url }}" class="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-[15px] transition-colors hover:bg-primary-soft">{{ $category->name }}</a>
+                        </li>
+                    @else
+                        @php
+                            $promos = collect($category->promos ?? [])->filter(fn ($promo) => filled($promo['title'] ?? null))->values();
+                        @endphp
+                        <li class="mega-item static">
+                            <button class="mega-trigger flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-[15px] transition-colors" aria-haspopup="true">
+                                {{ $category->name }}
+                                <svg class="chev w-4 h-4 transition-transform">
+                                    <use href="#i-chev" />
+                                </svg>
+                            </button>
+                            <div class="mega-panel absolute left-0 right-0 top-full z-40">
+                                <div class="max-w-7xl mx-auto px-6">
+                                    <div class="bg-white border border-line rounded-3xl shadow-sm mt-1 p-8 grid gap-8" style="grid-template-columns: minmax(0, 1fr){{ $promos->isNotEmpty() ? ' repeat('.$promos->count().', 16.5rem)' : '' }}">
+                                        <div class="grid gap-8 content-start" style="grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr))">
+                                            @foreach ($category->children as $group)
+                                                <div>
+                                                    <h3 class="font-display font-extrabold text-lg mb-3"><a href="{{ $group->url }}">{{ $group->name }}</a></h3>
+                                                    @if ($group->children->isNotEmpty())
+                                                        <ul class="grid gap-2 text-[15px]">
+                                                            @include('frontend.dashboard.layouts.partials.mega_links', ['items' => $group->children])
+                                                        </ul>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                            <div style="grid-column: 1 / -1">
+                                                <a href="{{ $category->url }}" class="font-bold underline underline-offset-4">View all {{ $category->name }}</a>
+                                            </div>
+                                        </div>
+                                        @foreach ($promos as $promo)
+                                            @php
+                                                $isNavy = ($promo['color'] ?? ($loop->first ? 'navy' : 'yellow')) === 'navy';
+                                            @endphp
+                                            <a href="{{ filled($promo['link'] ?? null) ? $promo['link'] : $category->url }}" class="block rounded-2xl p-5 relative overflow-hidden {{ $isNavy ? 'bg-primary text-white' : 'bg-accent' }}" style="align-self: start; min-height: 13.5rem">
+                                                <span class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full {{ $isNavy ? 'bg-accent' : 'bg-primary' }}"></span>
+                                                @if (filled($promo['badge'] ?? null))
+                                                    <span class="relative inline-block text-xs font-bold px-2.5 py-1 rounded-full {{ $isNavy ? 'bg-white text-primary' : 'bg-ink text-white' }}">{{ $promo['badge'] }}</span>
+                                                @endif
+                                                <p class="relative font-display font-extrabold text-2xl leading-tight mt-3">{{ $promo['title'] }}</p>
+                                                @if (filled($promo['cta'] ?? null))
+                                                    <span class="relative inline-block mt-4 font-bold underline underline-offset-4">{{ $promo['cta'] }}</span>
+                                                @endif
+                                            </a>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </li>
-
-                <!-- Electronics -->
-                <li class="mega-item static">
-                    <button class="mega-trigger flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-[15px] transition-colors" aria-haspopup="true">
-                        Electronics
-                        <svg class="chev w-4 h-4 transition-transform">
-                            <use href="#i-chev" />
-                        </svg>
-                    </button>
-                    <div class="mega-panel absolute left-0 right-0 top-full z-40">
-                        <div class="max-w-7xl mx-auto px-6">
-                            <div class="bg-white border border-line rounded-3xl shadow-sm mt-1 p-8 grid grid-cols-12 gap-8">
-                                <div class="col-span-2">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Phones</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Smartphones</a></li>
-                                        <li><a href="shop.html" class="link-u">Tablets</a></li>
-                                        <li><a href="shop.html" class="link-u">Cases &amp; covers</a></li>
-                                        <li><a href="shop.html" class="link-u">Power banks</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-2">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Computing</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Laptops</a></li>
-                                        <li><a href="shop.html" class="link-u">Monitors</a></li>
-                                        <li><a href="shop.html" class="link-u">Keyboards &amp; mice</a></li>
-                                        <li><a href="shop.html" class="link-u">Routers</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-2">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Audio</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Earbuds</a></li>
-                                        <li><a href="shop.html" class="link-u">Headphones</a></li>
-                                        <li><a href="shop.html" class="link-u">Bluetooth speakers</a></li>
-                                        <li><a href="shop.html" class="link-u">Smartwatches</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-3">
-                                    <a href="shop.html" class="block h-full rounded-2xl bg-primary p-5 text-white relative overflow-hidden">
-                                        <span class="absolute -right-8 top-6 w-32 h-32 rounded-full bg-primary-200/80"></span>
-                                        <span class="relative inline-block bg-accent text-ink text-xs font-bold px-2.5 py-1 rounded-full">Official warranty</span>
-                                        <p class="relative font-display font-extrabold text-2xl leading-tight mt-3">New phones, 0% EMI up to 12 months</p>
-                                        <span class="relative inline-block mt-4 font-bold underline underline-offset-4">Browse phones</span>
-                                    </a>
-                                </div>
-                                <div class="col-span-3">
-                                    <a href="shop.html" class="block h-full rounded-2xl bg-accent p-5 relative overflow-hidden">
-                                        <span class="absolute -left-6 -bottom-6 w-28 h-28 rounded-full bg-accent"></span>
-                                        <span class="relative inline-block bg-ink text-white text-xs font-bold px-2.5 py-1 rounded-full">Hot deal</span>
-                                        <p class="relative font-display font-extrabold text-2xl leading-tight mt-3">Earbuds from ৳990</p>
-                                        <span class="relative inline-block mt-4 font-bold underline underline-offset-4">Grab a pair</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-
-                <!-- Home & Living -->
-                <li class="mega-item static">
-                    <button class="mega-trigger flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-[15px] transition-colors" aria-haspopup="true">
-                        Home &amp; Living
-                        <svg class="chev w-4 h-4 transition-transform">
-                            <use href="#i-chev" />
-                        </svg>
-                    </button>
-                    <div class="mega-panel absolute left-0 right-0 top-full z-40">
-                        <div class="max-w-7xl mx-auto px-6">
-                            <div class="bg-white border border-line rounded-3xl shadow-sm mt-1 p-8 grid grid-cols-12 gap-8">
-                                <div class="col-span-3">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Furniture</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Beds &amp; mattresses</a></li>
-                                        <li><a href="shop.html" class="link-u">Sofas &amp; chairs</a></li>
-                                        <li><a href="shop.html" class="link-u">Desks &amp; storage</a></li>
-                                        <li><a href="shop.html" class="link-u">Shelves</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-3">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Kitchen</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Cookware</a></li>
-                                        <li><a href="shop.html" class="link-u">Appliances</a></li>
-                                        <li><a href="shop.html" class="link-u">Dinnerware</a></li>
-                                        <li><a href="shop.html" class="link-u">Storage boxes</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-3">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Decor</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Wall art</a></li>
-                                        <li><a href="shop.html" class="link-u">Lighting</a></li>
-                                        <li><a href="shop.html" class="link-u">Curtains &amp; rugs</a></li>
-                                        <li><a href="shop.html" class="link-u">Plants &amp; planters</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-3">
-                                    <a href="shop.html" class="block h-full rounded-2xl bg-accent p-5 relative overflow-hidden">
-                                        <span class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-primary"></span>
-                                        <span class="relative inline-block bg-ink text-white text-xs font-bold px-2.5 py-1 rounded-full">Free assembly</span>
-                                        <p class="relative font-display font-extrabold text-2xl leading-tight mt-3">Refresh your room for less</p>
-                                        <span class="relative inline-block mt-4 font-bold underline underline-offset-4">Shop home</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-
-                <!-- Beauty -->
-                <li class="mega-item static">
-                    <button class="mega-trigger flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-[15px] transition-colors" aria-haspopup="true">
-                        Beauty
-                        <svg class="chev w-4 h-4 transition-transform">
-                            <use href="#i-chev" />
-                        </svg>
-                    </button>
-                    <div class="mega-panel absolute left-0 right-0 top-full z-40">
-                        <div class="max-w-7xl mx-auto px-6">
-                            <div class="bg-white border border-line rounded-3xl shadow-sm mt-1 p-8 grid grid-cols-12 gap-8">
-                                <div class="col-span-3">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Skincare</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Cleansers</a></li>
-                                        <li><a href="shop.html" class="link-u">Moisturizers</a></li>
-                                        <li><a href="shop.html" class="link-u">Sunscreen</a></li>
-                                        <li><a href="shop.html" class="link-u">Serums</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-3">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Makeup</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Lips</a></li>
-                                        <li><a href="shop.html" class="link-u">Eyes</a></li>
-                                        <li><a href="shop.html" class="link-u">Face</a></li>
-                                        <li><a href="shop.html" class="link-u">Nails</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-3">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Hair &amp; body</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Shampoo &amp; oil</a></li>
-                                        <li><a href="shop.html" class="link-u">Perfume &amp; attar</a></li>
-                                        <li><a href="shop.html" class="link-u">Grooming for men</a></li>
-                                        <li><a href="shop.html" class="link-u">Body care</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-3">
-                                    <a href="shop.html" class="block h-full rounded-2xl bg-primary p-5 text-white relative overflow-hidden">
-                                        <span class="absolute -left-6 -top-6 w-28 h-28 rounded-full bg-primary"></span>
-                                        <span class="relative inline-block bg-white text-primary text-xs font-bold px-2.5 py-1 rounded-full">100% authentic</span>
-                                        <p class="relative font-display font-extrabold text-2xl leading-tight mt-3">Skincare sets, buy 2 get 1</p>
-                                        <span class="relative inline-block mt-4 font-bold underline underline-offset-4">Shop beauty</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-
-                <!-- Grocery -->
-                <li class="mega-item static">
-                    <button class="mega-trigger flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-[15px] transition-colors" aria-haspopup="true">
-                        Grocery
-                        <svg class="chev w-4 h-4 transition-transform">
-                            <use href="#i-chev" />
-                        </svg>
-                    </button>
-                    <div class="mega-panel absolute left-0 right-0 top-full z-40">
-                        <div class="max-w-7xl mx-auto px-6">
-                            <div class="bg-white border border-line rounded-3xl shadow-sm mt-1 p-8 grid grid-cols-12 gap-8">
-                                <div class="col-span-3">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Fresh</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Fruits</a></li>
-                                        <li><a href="shop.html" class="link-u">Vegetables</a></li>
-                                        <li><a href="shop.html" class="link-u">Fish &amp; meat</a></li>
-                                        <li><a href="shop.html" class="link-u">Eggs &amp; dairy</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-3">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Pantry</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Rice, dal &amp; oil</a></li>
-                                        <li><a href="shop.html" class="link-u">Spices</a></li>
-                                        <li><a href="shop.html" class="link-u">Snacks</a></li>
-                                        <li><a href="shop.html" class="link-u">Tea &amp; coffee</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-3">
-                                    <h3 class="font-display font-extrabold text-lg mb-3">Household</h3>
-                                    <ul class="grid gap-2 text-[15px]">
-                                        <li><a href="shop.html" class="link-u">Cleaning</a></li>
-                                        <li><a href="shop.html" class="link-u">Tissue &amp; paper</a></li>
-                                        <li><a href="shop.html" class="link-u">Baby care</a></li>
-                                        <li><a href="shop.html" class="link-u">Pet supplies</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-span-3">
-                                    <a href="shop.html" class="block h-full rounded-2xl bg-accent p-5 relative overflow-hidden">
-                                        <span class="absolute -right-6 -bottom-6 w-28 h-28 rounded-full bg-accent"></span>
-                                        <span class="relative inline-block bg-ink text-white text-xs font-bold px-2.5 py-1 rounded-full">Same-day</span>
-                                        <p class="relative font-display font-extrabold text-2xl leading-tight mt-3">Order by 2 PM, get it today</p>
-                                        <span class="relative inline-block mt-4 font-bold underline underline-offset-4">Start shopping</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-
-                <li><a href="shop.html" class="block px-4 py-2.5 rounded-xl font-bold text-[15px] hover:bg-primary-soft">Sports</a></li>
+                        </li>
+                    @endif
+                @endforeach
 
                 <li class="ml-auto">
                     <a href="track.html" class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-[15px] border-2 border-line hover:border-primary hover:text-primary hover:bg-primary-soft transition-colors">

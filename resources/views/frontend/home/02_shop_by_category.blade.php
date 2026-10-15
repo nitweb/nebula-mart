@@ -1,9 +1,14 @@
+@if ($homeCategories->isNotEmpty())
+@php
+    $sliderActive = $homeCategories->count() > 6;
+@endphp
 <section class="max-w-7xl mx-auto px-4 lg:px-6 mt-12" aria-labelledby="h-cat" aria-roledescription="carousel">
 
     <div class="flex items-end justify-between mb-6 gap-4">
 
         <h2 id="h-cat" class="font-display font-extrabold text-3xl">Shop by category</h2>
 
+        @if ($sliderActive)
         <div class="flex gap-2">
 
             <button type="button" data-cat-prev class="w-10 h-10 grid place-items-center rounded-full bg-white border border-line hover:bg-accent" aria-label="Previous categories">
@@ -19,59 +24,26 @@
             </button>
 
         </div>
+        @endif
 
     </div>
 
-    <ul id="cat-track" class="cat-track" data-loop="3500" data-loop-prev="[data-cat-prev]" data-loop-next="[data-cat-next]">
+    <ul id="cat-track" class="cat-track" @if ($sliderActive) data-loop="3500" data-loop-prev="[data-cat-prev]" data-loop-next="[data-cat-next]" @endif>
 
-        <li class="cat-slide">
-            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
-                <span class="w-16 h-16 rounded-2xl bg-primary grid place-items-center text-3xl border border-line" aria-hidden="true">⚕️</span>
-                <span class="font-bold text-sm text-center">Medical</span>
-            </a>
-        </li>
-
-        <li class="cat-slide">
-            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
-                <span class="w-16 h-16 rounded-2xl bg-accent grid place-items-center text-3xl border border-line" aria-hidden="true">👗</span>
-                <span class="font-bold text-sm text-center">Fashion</span>
-            </a>
-        </li>
-
-        <li class="cat-slide">
-            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
-                <span class="w-16 h-16 rounded-2xl bg-primary grid place-items-center text-3xl border border-line" aria-hidden="true">📱</span>
-                <span class="font-bold text-sm text-center">Electronics</span>
-            </a>
-        </li>
-
-        <li class="cat-slide">
-            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
-                <span class="w-16 h-16 rounded-2xl bg-accent grid place-items-center text-3xl border border-line" aria-hidden="true">🏠</span>
-                <span class="font-bold text-sm text-center">Home and Living</span>
-            </a>
-        </li>
-
-        <li class="cat-slide">
-            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
-                <span class="w-16 h-16 rounded-2xl bg-primary grid place-items-center text-3xl border border-line" aria-hidden="true">💄</span>
-                <span class="font-bold text-sm text-center">Beauty</span>
-            </a>
-        </li>
-
-        <li class="cat-slide">
-            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
-                <span class="w-16 h-16 rounded-2xl bg-accent grid place-items-center text-3xl border border-line" aria-hidden="true">🛒</span>
-                <span class="font-bold text-sm text-center">Grocery</span>
-            </a>
-        </li>
-
-        <li class="cat-slide">
-            <a href="shop.html" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
-                <span class="w-16 h-16 rounded-2xl bg-primary grid place-items-center text-3xl border border-line" aria-hidden="true">⚽</span>
-                <span class="font-bold text-sm text-center">Sports</span>
-            </a>
-        </li>
+        @foreach ($homeCategories as $category)
+            <li class="cat-slide">
+                <a href="{{ $category->url }}" class="flex flex-col items-center gap-3 bg-white border border-line rounded-2xl p-4 hover:shadow-md hover:-translate-y-0.5 transition-all">
+                    <span class="w-16 h-16 rounded-2xl grid place-items-center text-3xl font-extrabold text-primary" style="overflow: hidden" aria-hidden="true">
+                        @if ($category->image)
+                            <img src="{{ $category->image_url }}" alt="" class="w-full h-full object-cover" loading="lazy">
+                        @else
+                            {{ mb_strtoupper(mb_substr($category->name, 0, 1)) }}
+                        @endif
+                    </span>
+                    <span class="font-bold text-sm text-center">{{ $category->name }}</span>
+                </a>
+            </li>
+        @endforeach
 
     </ul>
 
@@ -113,3 +85,4 @@
         }
     }
 </style>
+@endif

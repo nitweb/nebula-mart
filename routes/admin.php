@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Admin\Auth\RegisteredUserController;
 use App\Http\Controllers\Admin\Auth\VerifyEmailController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SettingController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +53,9 @@ Route::middleware('auth:admin')
         Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');
         // Banner Routes
         Route::resource('banners', BannerController::class)->except('show');
+        // Category Routes
+        Route::patch('categories/{category}/toggle', [CategoryController::class, 'toggle'])->name('categories.toggle');
+        Route::resource('categories', CategoryController::class)->except('show');
         // Setting Routes
         Route::get('settings', [SettingController::class, 'edit'])->name('settings.edit');
         Route::put('settings', [SettingController::class, 'update'])->name('settings.update');

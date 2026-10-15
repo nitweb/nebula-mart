@@ -37,7 +37,7 @@
             <span>Products</span>
         </a>
 
-        <a href="categories.html" class="nav-link">
+        <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
             <svg class="ic ">
                 <use href="#i-layers" />
             </svg>
