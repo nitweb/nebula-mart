@@ -119,6 +119,14 @@
                         </li>
                     @endforeach
                 </ul>
+                <div class="mt-5">
+                    <label for="co-coupon" class="font-bold block mb-2">Coupon code</label>
+                    <div class="flex gap-2">
+                        <input id="co-coupon" type="text" placeholder="Enter coupon code" maxlength="40" autocomplete="off" value="{{ $cartSummary['coupon']['code'] ?? '' }}" @readonly((bool) $cartSummary['coupon']) class="w-full rounded-xl border border-line px-4 py-3 bg-white focus:outline-none focus:shadow-md uppercase read-only:bg-ink/5 read-only:cursor-not-allowed">
+                        <button type="button" id="co-apply" @disabled((bool) $cartSummary['coupon']) class="bg-ink text-white font-bold rounded-xl px-5 hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-ink">Apply</button>
+                    </div>
+                    <p id="co-cmsg" class="text-sm mt-2" role="status">@if ($cartSummary['coupon'])<span class="text-success font-bold">{{ $cartSummary['coupon']['code'] }} applied: {{ $cartSummary['coupon']['label'] }}.</span>@endif</p>
+                </div>
                 <dl class="mt-5 grid gap-2.5 border-t-2 border-dashed border-line pt-5">
                     <div class="flex justify-between">
                         <dt>Subtotal</dt>

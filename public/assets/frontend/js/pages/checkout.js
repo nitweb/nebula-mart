@@ -28,6 +28,15 @@ document.addEventListener('DOMContentLoaded', function () {
             return '<li class="flex gap-3"><span class="relative shrink-0"><img src="' + esc(i.image) + '" alt="" width="300" height="300" class="w-14 h-14 rounded-lg object-cover border border-line"><span class="absolute -top-2 -right-2 min-w-5 h-5 px-1 rounded-full bg-ink text-white text-xs font-bold grid place-items-center">' + i.quantity + '</span></span><span class="flex-1 min-w-0 text-sm font-bold leading-snug">' + esc(i.name) + (i.variant ? '<span class="block text-xs font-medium text-ink/60">' + esc(i.variant) + '</span>' : '') + '</span><span class="mi-price font-bold text-sm">' + tk(i.line_total) + '</span></li>';
         }).join('');
         $('t-sub').textContent = tk(c.subtotal);
+        var cin = $('co-coupon'), cbtn = $('co-apply'), locked = !!c.coupon;
+        if (cin && cbtn) {
+            if (locked) {
+                cin.value = c.coupon.code;
+                $('co-cmsg').innerHTML = '<span class="text-success font-bold">' + esc(c.coupon.code) + ' applied: ' + esc(c.coupon.label) + '.</span>';
+            }
+            cin.readOnly = locked;
+            cbtn.disabled = locked;
+        }
         $('r-disc').hidden = !c.coupon || (!c.discount && !c.coupon.free_delivery);
         $('r-disc-label').textContent = c.coupon ? 'Coupon ' + c.coupon.code : 'Coupon';
         $('t-disc').textContent = c.coupon && c.coupon.free_delivery ? 'Free delivery' : '-' + tk(c.discount);
@@ -58,6 +67,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 money(cart);
             });
         }).catch(function () { zoneError = 'Network problem. Please check your connection.'; money(cart) });
+    }
+
+    /* ---------- coupon ---------- */
+    function applyCoupon() {
+        var cin = $('co-coupon'), msg = $('co-cmsg'), code = cin.value.trim();
+        if (cin.readOnly) return;
+        if (!code) { msg.innerHTML = '<span class="text-danger font-bold">Enter a coupon code.</span>'; return }
+        $('co-apply').disabled = true;
+        fetch(cfg.routes.coupon, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'X-Requested-With': 'XMLHttpRequest' },
+            body: JSON.stringify({ code: code })
+        }).then(function (res) {
+            return res.json().catch(function () { return {} }).then(function (data) {
+                if (data.cart) cart = data.cart;
+                if (!res.ok) { msg.innerHTML = '<span class="text-danger font-bold">' + esc(data.message || 'This coupon cannot be applied.') + '</span>'; $('co-apply').disabled = false }
+                money(cart);
+            });
+        }).catch(function () { msg.innerHTML = '<span class="text-danger font-bold">Network problem. Please check your connection.</span>'; $('co-apply').disabled = false });
+    }
+    if ($('co-apply')) {
+        $('co-apply').addEventListener('click', applyCoupon);
+        $('co-coupon').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); applyCoupon() } });
     }
 
     /* ---------- district picker ---------- */
