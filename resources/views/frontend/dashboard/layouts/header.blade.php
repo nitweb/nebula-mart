@@ -101,14 +101,14 @@
                     </a>
 
                     <!-- Cart -->
-                    <button id="open-cart" class="flex items-center gap-2 bg-ink text-white rounded-xl pl-3 pr-3.5 py-2.5 font-bold text-sm hover:bg-primary transition-colors" aria-label="Open cart, 2 items" aria-controls="cart-drawer" aria-expanded="false">
+                    <button id="open-cart" class="flex items-center gap-2 bg-ink text-white rounded-xl pl-3 pr-3.5 py-2.5 font-bold text-sm hover:bg-primary transition-colors" aria-label="Open cart, {{ $cartSummary['count'] }} {{ $cartSummary['count'] === 1 ? 'item' : 'items' }}" aria-controls="cart-drawer" aria-expanded="false">
                         <span class="relative">
                             <svg class="w-6 h-6">
                                 <use href="#i-bag" />
                             </svg>
-                            <span class="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-ink text-[10px] font-extrabold grid place-items-center">2</span>
+                            <span class="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-ink text-[10px] font-extrabold grid place-items-center" data-cart-badge>{{ $cartSummary['count'] }}</span>
                         </span>
-                        <span class="hidden md:block">৳3,480</span>
+                        <span class="hidden md:block" data-cart-total>৳{{ number_format($cartSummary['subtotal'], floor($cartSummary['subtotal']) == $cartSummary['subtotal'] ? 0 : 2) }}</span>
                     </button>
 
                 </div>

@@ -68,7 +68,7 @@
             <span>Customers</span>
         </a>
 
-        <a href="coupons.html" class="nav-link">
+        <a href="{{ route('admin.coupons.index') }}" class="nav-link {{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}">
             <svg class="ic ">
                 <use href="#i-ticket" />
             </svg>

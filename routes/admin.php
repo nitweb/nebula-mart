@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Auth\VerifyEmailController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\FlashDealController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
@@ -68,6 +69,9 @@ Route::middleware('auth:admin')
         // Flash Deal Routes
         Route::patch('flash-deals/{flash_deal}/toggle', [FlashDealController::class, 'toggle'])->name('flash-deals.toggle');
         Route::resource('flash-deals', FlashDealController::class)->except('show');
+        // Coupon Routes
+        Route::patch('coupons/{coupon}/toggle', [CouponController::class, 'toggle'])->name('coupons.toggle');
+        Route::resource('coupons', CouponController::class)->except('show');
         // Setting Routes
         Route::get('settings', [SettingController::class, 'edit'])->name('settings.edit');
         Route::put('settings', [SettingController::class, 'update'])->name('settings.update');

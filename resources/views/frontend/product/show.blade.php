@@ -7,7 +7,7 @@
     $colors = $variants->pluck('color')->filter()->unique()->values();
     $default = $variants->first(fn ($v) => $v->stock > 0 || ! $product->track_inventory) ?? $variants->first();
     $images = $product->images;
-    $variantData = $variants->map(fn ($v) => ['size' => $v->size, 'color' => $v->color, 'price' => $v->price, 'stock' => $v->stock])->values();
+    $variantData = $variants->map(fn ($v) => ['id' => $v->id, 'size' => $v->size, 'color' => $v->color, 'price' => $v->price, 'stock' => $v->stock])->values();
     $title = $product->meta_title ?: $product->name.' | '.$setting('store_name');
     $description = $product->meta_description ?: ($product->short_description ?: \Illuminate\Support\Str::limit(strip_tags((string) $product->description), 155));
     $inStock = $product->in_stock;
@@ -181,7 +181,7 @@
                         <button type="button" id="q+" class="px-4 py-3" aria-label="Increase quantity">+</button>
                     </div>
                     <button type="button" id="add-main" class="addcart flex-1 min-w-[150px] bg-primary hover:bg-primary-dark text-white font-extrabold rounded-xl py-3.5 border border-line shadow-sm"
-                        data-id="{{ $product->id }}" data-name="{{ $product->name }}" data-img="{{ $product->cover_url }}" data-price="{{ $shownPrice }}" data-old="{{ $hasOld ? $oldPrice : '' }}" data-variant="Standard" @disabled(! $inStock)>
+                        data-product-id="{{ $product->id }}" data-variant-id="{{ $default?->id ?? 0 }}" @disabled(! $inStock)>
                         {{ $inStock ? 'Add to cart' : 'Out of stock' }}
                     </button>
                     <button type="button" id="buy-now" class="flex-1 min-w-[130px] text-center bg-accent font-extrabold rounded-xl py-3.5 border border-line shadow-sm" @disabled(! $inStock)>Buy now</button>
@@ -312,15 +312,18 @@
 
             chip.textContent = !available ? 'Out of stock' : (base.track && stock <= base.low ? 'Only ' + stock + ' left' : 'In stock');
 
-            add.dataset.price = p;
-            add.dataset.old = hasOld ? ref : '';
-            add.dataset.variant = label.length ? label.join(' / ') : 'Standard';
+            add.dataset.variantId = v ? v.id : 0;
             add.disabled = buy.disabled = !available;
             add.textContent = available ? 'Add to cart' : 'Out of stock';
         }
 
         document.querySelectorAll('input[name=size], input[name=color]').forEach(function (r) { r.addEventListener('change', update); });
-        buy.addEventListener('click', function () { add.click(); setTimeout(function () { location.href = '{{ url('/checkout') }}'; }, 200); });
+        buy.addEventListener('click', function () {
+            if (!window.NebulaCart) return;
+            window.NebulaCart.add(add.dataset.productId, add.dataset.variantId, document.getElementById('qty').value).then(function (result) {
+                if (result.ok) location.href = '{{ \Illuminate\Support\Facades\Route::has('checkout') ? route('checkout') : route('cart.index') }}';
+            });
+        });
         update();
     })();
 </script>

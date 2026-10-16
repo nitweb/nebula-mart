@@ -19,7 +19,7 @@
                 <button type="button" class="wish w-9 h-9 grid place-items-center rounded-full bg-white border border-line hover:bg-primary hover:text-white" aria-label="Add {{ $pName }} to wishlist" aria-pressed="false">
                     <svg class="w-5 h-5"><use href="#i-heart" /></svg>
                 </button>
-                <button type="button" class="qv" aria-label="Quick view {{ $pName }}" data-name="{{ $pName }}" data-price="{{ $fmt($shownPrice) }}" data-old="{{ $oldPrice ? $fmt($oldPrice) : '' }}" data-img="{{ $product->cover_url }}" data-href="{{ $product->url }}" data-brand="{{ $product->brand?->name }}">
+                <button type="button" class="qv" aria-label="Quick view {{ $pName }}" data-id="{{ $product->id }}" data-has-variants="{{ $product->has_variants ? 1 : 0 }}" data-name="{{ $pName }}" data-price="{{ $fmt($shownPrice) }}" data-old="{{ $oldPrice ? $fmt($oldPrice) : '' }}" data-img="{{ $product->cover_url }}" data-href="{{ $product->url }}" data-brand="{{ $product->brand?->name }}">
                     <svg class="w-5 h-5"><use href="#i-eye" /></svg>
                 </button>
             </div>
@@ -54,7 +54,7 @@
         @elseif ($product->has_variants)
             <a href="{{ $product->url }}" class="card-cart" style="display:block;text-align:center">Select options</a>
         @else
-            <button type="button" class="addcart card-cart" aria-label="Add {{ $pName }} to cart">Add to cart</button>
+            <button type="button" class="addcart card-cart" data-product-id="{{ $product->id }}" aria-label="Add {{ $pName }} to cart">Add to cart</button>
         @endif
     </article>
 </li>

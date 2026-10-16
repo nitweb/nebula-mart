@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\FlashDealController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\ProductController as StorefrontProductController;
@@ -14,6 +15,18 @@ Route::get('/flash-deals', [FlashDealController::class, 'index'])->name('flash-d
 Route::get('/category/{category:slug}', [ShopController::class, 'category'])->name('category.show');
 Route::get('/brand/{brand:slug}', [ShopController::class, 'brand'])->name('brand.show');
 Route::get('/product/{product:slug}', [StorefrontProductController::class, 'show'])->name('product.show');
+
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::prefix('cart')->as('cart.')->middleware('throttle:120,1')->group(function () {
+    Route::get('summary', [CartController::class, 'summary'])->name('summary');
+    Route::post('items', [CartController::class, 'store'])->name('items.store');
+    Route::patch('items/{key}', [CartController::class, 'update'])->where('key', '\d+-\d+')->name('items.update');
+    Route::delete('items/{key}', [CartController::class, 'destroy'])->where('key', '\d+-\d+')->name('items.destroy');
+    Route::delete('/', [CartController::class, 'clear'])->name('clear');
+    Route::post('coupon', [CartController::class, 'applyCoupon'])->name('coupon.apply');
+    Route::delete('coupon', [CartController::class, 'removeCoupon'])->name('coupon.remove');
+    Route::put('zone', [CartController::class, 'zone'])->name('zone');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @php
         $siteTitle = trim($__env->yieldContent('frontend_title')) ?: $setting('meta_title');
         $siteDescription = trim($__env->yieldContent('frontend_description')) ?: $setting('meta_description');
@@ -226,7 +227,7 @@
 
             <div class="flex items-center justify-between p-4 bg-accent border-b-4 border-line">
 
-                <h2 class="font-display font-extrabold text-2xl text-white">Your cart <span class="text-base font-bold">(2)</span></h2>
+                <h2 class="font-display font-extrabold text-2xl text-white">Your cart <span class="text-base font-bold" data-cart-count>({{ $cartSummary['count'] }})</span></h2>
 
                 <button class="p-2 rounded-lg hover:bg-ink/10" data-close-cart aria-label="Close cart">
                     <svg class="w-6 h-6">
@@ -236,56 +237,16 @@
 
             </div>
 
-            <ul class="flex-1 overflow-y-auto p-4 grid gap-4 content-start">
-
-                <li class="flex gap-3 p-3 rounded-2xl border border-line">
-
-                    <div class="w-20 h-20 rounded-xl bg-primary-soft grid place-items-center font-display font-extrabold text-primary text-xl shrink-0">IMG</div>
-
-                    <div class="flex-1 min-w-0">
-
-                        <p class="font-bold leading-snug">Wireless Earbuds Pro</p>
-
-                        <p class="text-sm text-ink/60">Color: Mint</p>
-
-                        <div class="flex items-center justify-between mt-2">
-                            <div class="flex items-center border border-line rounded-lg font-bold text-sm">
-                                <button class="px-2.5 py-1" aria-label="Decrease">−</button>
-                                <span class="px-2">1</span>
-                                <button class="px-2.5 py-1" aria-label="Increase">+</button>
-                            </div>
-                            <span class="font-extrabold">৳1,490</span>
-                        </div>
-
-                    </div>
-
-                </li>
-
-                <li class="flex gap-3 p-3 rounded-2xl border border-line">
-
-                    <div class="w-20 h-20 rounded-xl bg-accent/40 grid place-items-center font-display font-extrabold text-ink text-xl shrink-0">IMG</div>
-
-                    <div class="flex-1 min-w-0">
-                        <p class="font-bold leading-snug">Cotton Panjabi, Navy</p>
-                        <p class="text-sm text-ink/60">Size: L</p>
-                        <div class="flex items-center justify-between mt-2">
-                            <div class="flex items-center border border-line rounded-lg font-bold text-sm">
-                                <button class="px-2.5 py-1" aria-label="Decrease">−</button>
-                                <span class="px-2">1</span>
-                                <button class="px-2.5 py-1" aria-label="Increase">+</button>
-                            </div>
-                            <span class="font-extrabold">৳1,990</span>
-                        </div>
-                    </div>
-
-                </li>
-
+            <ul class="flex-1 overflow-y-auto p-4 grid gap-4 content-start" data-cart-list>
+                @if (! $cartSummary['items'])
+                    <li class="text-center py-10 font-bold text-ink/60">Your cart is empty.</li>
+                @endif
             </ul>
 
             <div class="p-4 border-t-4 border-line bg-paper">
-                <div class="flex justify-between font-bold text-lg mb-3"><span>Subtotal</span><span>৳3,480</span></div>
-                <a href="checkout.html" class="block text-center bg-primary hover:bg-primary-dark text-white font-extrabold rounded-xl py-3.5 shadow-sm">Checkout</a>
-                <a href="cart.html" class="block text-center mt-2.5 font-bold underline underline-offset-4">View full cart</a>
+                <div class="flex justify-between font-bold text-lg mb-3"><span>Subtotal</span><span data-cart-subtotal>৳{{ number_format($cartSummary['subtotal'], floor($cartSummary['subtotal']) == $cartSummary['subtotal'] ? 0 : 2) }}</span></div>
+                <a href="{{ $cartSummary['checkout_url'] }}" data-cart-checkout class="block text-center bg-primary hover:bg-primary-dark text-white font-extrabold rounded-xl py-3.5 shadow-sm">Checkout</a>
+                <a href="{{ route('cart.index') }}" class="block text-center mt-2.5 font-bold underline underline-offset-4">View full cart</a>
             </div>
 
         </aside>
@@ -344,7 +305,21 @@
 
     <script src="{{ asset('assets/frontend/js/search-index.js') }}" defer></script>
     <script src="{{ asset('assets/frontend/js/electronics-data.js') }}" defer></script>
+    <script>
+        window.NEBULA_CART = {
+            initial: @json($cartSummary),
+            routes: {
+                summary: @json(route('cart.summary')),
+                add: @json(route('cart.items.store')),
+                item: @json(url('/cart/items')),
+                coupon: @json(route('cart.coupon.apply')),
+                zone: @json(route('cart.zone')),
+                cart: @json(route('cart.index'))
+            }
+        };
+    </script>
     <script src="{{ asset('assets/frontend/js/main.js') }}" defer></script>
+    <script src="{{ asset('assets/frontend/js/cart.js') }}?v={{ filemtime(public_path('assets/frontend/js/cart.js')) }}" defer></script>
     <script src="{{ asset('assets/frontend/js/loop-slider.js') }}" defer></script>
     <script src="{{ asset('assets/frontend/js/pages/electronics.js') }}" defer></script>
     <script>
