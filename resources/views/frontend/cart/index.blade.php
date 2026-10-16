@@ -24,6 +24,10 @@
 
     <div class="max-w-7xl mx-auto px-4 lg:px-6 py-8">
 
+        @if (session('error'))
+            <p class="mb-6 rounded-xl bg-accent/30 border border-line px-4 py-3 text-sm font-bold text-danger" role="alert">{{ session('error') }}</p>
+        @endif
+
         <ol class="flex items-center gap-3 max-w-xl bg-white border border-line rounded-2xl px-5 py-3" aria-label="Order progress">
             <li class="flex items-center gap-2" aria-current="step"><span class="w-9 h-9 rounded-full border border-line grid place-items-center font-extrabold bg-accent">1</span><span class="font-bold">Cart</span></li>
             <li aria-hidden="true" class="flex-1 h-1 rounded bg-ink/20"></li>

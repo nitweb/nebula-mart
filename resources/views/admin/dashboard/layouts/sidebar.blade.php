@@ -53,12 +53,15 @@
 
         <p class="nav-label">Sales</p>
 
-        <a href="orders.html" class="nav-link">
+        @php($pendingOrders = \App\Models\Order::where('status', 'pending')->count())
+        <a href="{{ route('admin.orders.index') }}" class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
             <svg class="ic ">
                 <use href="#i-cart" />
             </svg>
             <span>Orders</span>
-            <span class="nav-badge">12</span>
+            @if ($pendingOrders)
+                <span class="nav-badge">{{ $pendingOrders }}</span>
+            @endif
         </a>
 
         <a href="customers.html" class="nav-link">
