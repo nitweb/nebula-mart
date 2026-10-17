@@ -89,6 +89,7 @@
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/shop.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/track.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/404.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/refresh.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/extras.css') }}?v={{ filemtime(public_path('assets/frontend/css/pages/extras.css')) }}">
     @if ($setting('ga_id'))
@@ -319,6 +320,41 @@
         };
     </script>
     <script src="{{ asset('assets/frontend/js/main.js') }}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
+    <script>
+        window.notify = function (message, type) {
+            if (!message) {
+                return;
+            }
+
+            if (typeof Toastify === 'undefined') {
+                var fallback = document.getElementById('toast');
+
+                if (fallback) {
+                    fallback.textContent = message;
+                    fallback.style.opacity = 1;
+                    setTimeout(function () { fallback.style.opacity = 0; }, 2600);
+                }
+
+                return;
+            }
+
+            Toastify({
+                text: message,
+                duration: 4000,
+                gravity: 'top',
+                position: 'right',
+                close: true,
+                stopOnFocus: true,
+                style: {
+                    background: type === 'error' ? '#DC2626' : '#0A8F6B',
+                    borderRadius: '12px',
+                    fontWeight: '600',
+                    boxShadow: '0 14px 30px -10px rgba(0,0,0,.4)'
+                }
+            }).showToast();
+        };
+    </script>
     <script src="{{ asset('assets/frontend/js/cart.js') }}?v={{ filemtime(public_path('assets/frontend/js/cart.js')) }}" defer></script>
     <script src="{{ asset('assets/frontend/js/loop-slider.js') }}" defer></script>
     <script src="{{ asset('assets/frontend/js/pages/electronics.js') }}" defer></script>

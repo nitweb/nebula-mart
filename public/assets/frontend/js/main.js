@@ -40,7 +40,7 @@
     run('quickview', function () {
       (function () {
         var qv = document.getElementById('qv'), tt = document.getElementById('toast'), cb = document.querySelector('#open-cart .bg-accent'), tm;
-        function toast(m) { tt.textContent = m; tt.style.opacity = 1; clearTimeout(tm); tm = setTimeout(function () { tt.style.opacity = 0 }, 2000) }
+        function toast(m) { if (window.notify) window.notify(m, 'success') }
         function cq() { qv.classList.add('hidden') }
         document.addEventListener('click', function (e) {
           var b;

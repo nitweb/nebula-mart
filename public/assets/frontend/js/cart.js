@@ -20,13 +20,8 @@
     return '৳' + n.toLocaleString('en-US', { minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: whole ? 0 : 2 });
   }
 
-  function toast(message) {
-    var el = $('toast');
-    if (!el || !message) return;
-    el.textContent = message;
-    el.style.opacity = 1;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { el.style.opacity = 0; }, 2600);
+  function toast(message, type) {
+    if (window.notify) window.notify(message, type);
   }
 
   function request(method, url, body) {
@@ -157,7 +152,7 @@
     renderHeader(c);
     renderDrawer(c);
     renderPage(c);
-    if (c.notices && c.notices.length) toast(c.notices.join(' '));
+    if (c.notices && c.notices.length) toast(c.notices.join(' '), 'error');
   }
 
   /* ---------- actions ---------- */
@@ -168,7 +163,7 @@
       variant_id: Number(variantId) || null,
       quantity: Math.max(1, Math.min(10, parseInt(quantity, 10) || 1))
     }).then(function (result) {
-      toast(result.message);
+      toast(result.message, result.ok ? 'success' : 'error');
       if (result.ok && fab) { fab.classList.remove('fc-pulse'); void fab.offsetWidth; fab.classList.add('fc-pulse'); }
       return result;
     });
@@ -205,7 +200,7 @@
     }
 
     b = e.target.closest('[data-cart-remove]');
-    if (b) { request('DELETE', cfg.routes.item + '/' + b.dataset.cartRemove).then(function (r) { toast(r.message); }); return; }
+    if (b) { request('DELETE', cfg.routes.item + '/' + b.dataset.cartRemove).then(function (r) { toast(r.message, r.ok === false ? 'error' : 'success'); }); return; }
 
     b = e.target.closest('[data-cart-qty]');
     if (b) {
@@ -213,8 +208,8 @@
       if (!current) return;
       var next = current.quantity + Number(b.dataset.delta);
       if (next < 1) return;
-      if (next > current.max_quantity) { toast('Only ' + current.max_quantity + ' available.'); return; }
-      request('PATCH', cfg.routes.item + '/' + b.dataset.cartQty, { quantity: next }).then(function (r) { if (!r.ok) toast(r.message); });
+      if (next > current.max_quantity) { toast('Only ' + current.max_quantity + ' available.', 'error'); return; }
+      request('PATCH', cfg.routes.item + '/' + b.dataset.cartQty, { quantity: next }).then(function (r) { if (!r.ok) toast(r.message, 'error'); });
       return;
     }
 
@@ -233,7 +228,7 @@
 
   document.addEventListener('change', function (e) {
     if (PAGE === 'cart' && e.target.name === 'zone') {
-      request('PUT', cfg.routes.zone, { zone: e.target.value }).then(function (r) { if (!r.ok) toast(r.message); });
+      request('PUT', cfg.routes.zone, { zone: e.target.value }).then(function (r) { if (!r.ok) toast(r.message, 'error'); });
     }
   });
 
