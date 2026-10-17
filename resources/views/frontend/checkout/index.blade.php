@@ -46,6 +46,16 @@
             <div class="grid gap-6">
                 <section class="bg-white border border-line rounded-3xl p-6 lg:p-8" aria-labelledby="h-ship">
                     <h2 id="h-ship" class="font-display font-extrabold text-2xl">Delivery details</h2>
+                    @if ($addresses->count() > 1)
+                        <div class="mt-5">
+                            <label for="saved-address" class="block font-bold text-sm mb-1.5">Deliver to a saved address</label>
+                            <select id="saved-address" class="{{ $field }}">
+                                @foreach ($addresses as $saved)
+                                    <option value="{{ $saved->id }}" data-name="{{ $saved->name }}" data-phone="{{ $saved->phone }}" data-district="{{ $saved->district }}" data-area="{{ $saved->area }}" data-address="{{ $saved->address }}">{{ $saved->label }}: {{ $saved->full_address }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
                     <div class="grid sm:grid-cols-2 gap-4 mt-5">
                         <div>
                             <label for="name" class="block font-bold text-sm mb-1.5">Full name <span class="text-primary">*</span></label>
@@ -54,7 +64,7 @@
                         </div>
                         <div>
                             <label for="phone" class="block font-bold text-sm mb-1.5">Mobile number <span class="text-primary">*</span></label>
-                            <input id="phone" name="phone" type="tel" required autocomplete="tel" inputmode="numeric" pattern="01[3-9][0-9]{8}" maxlength="11" placeholder="01XXXXXXXXX" value="{{ old('phone') }}" class="{{ $field }}">
+                            <input id="phone" name="phone" type="tel" required autocomplete="tel" inputmode="numeric" pattern="01[3-9][0-9]{8}" maxlength="11" placeholder="01XXXXXXXXX" value="{{ old('phone', $user?->phone) }}" class="{{ $field }}">
                             @error('phone')<p class="text-sm font-bold text-danger mt-1.5">{{ $message }}</p>@enderror
                         </div>
                         <div class="sm:col-span-2">
@@ -64,19 +74,19 @@
                         </div>
                         <div class="sm:col-span-2 relative">
                             <label for="district" class="block font-bold text-sm mb-1.5">District <span class="text-primary">*</span></label>
-                            <input id="district" name="district" type="text" required autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="district-list" placeholder="Search or select district" value="{{ old('district') }}" class="{{ $field }}">
+                            <input id="district" name="district" type="text" required autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="district-list" placeholder="Search or select district" value="{{ old('district', $prefill?->district) }}" class="{{ $field }}">
                             <ul id="district-list" role="listbox" hidden></ul>
                             @error('district')<p class="text-sm font-bold text-danger mt-1.5">{{ $message }}</p>@enderror
                         </div>
                         <div class="sm:col-span-2 relative">
                             <label for="area-txt" class="block font-bold text-sm mb-1.5">Area / Thana <span class="text-primary">*</span></label>
-                            <input id="area-txt" aria-autocomplete="list" aria-controls="area-list" name="area_txt" type="text" required autocomplete="off" maxlength="120" @disabled(! old('district')) placeholder="{{ old('district') ? 'Select or type thana / upazila' : 'Select district first' }}" value="{{ old('area_txt', old('area')) }}" class="{{ $field }}">
+                            <input id="area-txt" aria-autocomplete="list" aria-controls="area-list" name="area_txt" type="text" required autocomplete="off" maxlength="120" @disabled(! old('district', $prefill?->district)) placeholder="{{ old('district', $prefill?->district) ? 'Select or type thana / upazila' : 'Select district first' }}" value="{{ old('area_txt', old('area', $prefill?->area)) }}" class="{{ $field }}">
                             <ul id="area-list" role="listbox" hidden></ul>
                             @error('area')<p class="text-sm font-bold text-danger mt-1.5">{{ $message }}</p>@enderror
                         </div>
                         <div class="sm:col-span-2">
                             <label for="address" class="block font-bold text-sm mb-1.5">Full address <span class="text-primary">*</span></label>
-                            <textarea id="address" name="address" rows="2" required maxlength="500" autocomplete="street-address" placeholder="House, road, block, landmark" class="{{ $field }}">{{ old('address') }}</textarea>
+                            <textarea id="address" name="address" rows="2" required maxlength="500" autocomplete="street-address" placeholder="House, road, block, landmark" class="{{ $field }}">{{ old('address', $prefill?->address) }}</textarea>
                             @error('address')<p class="text-sm font-bold text-danger mt-1.5">{{ $message }}</p>@enderror
                         </div>
                         <div class="sm:col-span-2">
@@ -152,4 +162,25 @@
             </aside>
         </form>
     </div>
+
+    @if ($addresses->count() > 1)
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var pick = document.getElementById('saved-address');
+                    if (!pick) return;
+                    pick.addEventListener('change', function () {
+                        var o = pick.options[pick.selectedIndex], d = o.dataset, f = function (id) { return document.getElementById(id) };
+                        f('name').value = d.name;
+                        f('phone').value = d.phone;
+                        f('address').value = d.address;
+                        f('district').value = d.district;
+                        f('district').dispatchEvent(new Event('input', { bubbles: true }));
+                        f('district-list').hidden = true;
+                        f('area-txt').value = d.area;
+                    });
+                });
+            </script>
+        @endpush
+    @endif
 @endsection

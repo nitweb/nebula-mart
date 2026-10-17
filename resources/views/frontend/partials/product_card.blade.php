@@ -5,6 +5,7 @@
     $oldPrice = $product->display_old_price;
     $percentOff = $product->display_discount_percent;
     $flashItem = $product->flash_item;
+    $wished = in_array($product->id, $wishlistIds ?? [], true);
 @endphp
 <li>
     <article class="group relative bg-white border border-line rounded-2xl overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full">
@@ -16,7 +17,7 @@
                 <span class="absolute top-3 left-3 {{ $flashItem ? 'bg-accent text-ink' : 'bg-primary text-white' }} text-xs font-extrabold px-2.5 py-1 rounded-lg">{{ $flashItem ? 'Flash ' : '' }}-{{ $percentOff }}%</span>
             @endif
             <div class="card-actions">
-                <button type="button" class="wish w-9 h-9 grid place-items-center rounded-full bg-white border border-line hover:bg-primary hover:text-white" aria-label="Add {{ $pName }} to wishlist" aria-pressed="false">
+                <button type="button" class="wish w-9 h-9 grid place-items-center rounded-full border border-line hover:bg-primary hover:text-white {{ $wished ? 'bg-primary text-white' : 'bg-white' }}" data-product-id="{{ $product->id }}" aria-label="Add {{ $pName }} to wishlist" aria-pressed="{{ $wished ? 'true' : 'false' }}">
                     <svg class="w-5 h-5"><use href="#i-heart" /></svg>
                 </button>
                 <button type="button" class="qv" aria-label="Quick view {{ $pName }}" data-id="{{ $product->id }}" data-has-variants="{{ $product->has_variants ? 1 : 0 }}" data-name="{{ $pName }}" data-price="{{ $fmt($shownPrice) }}" data-old="{{ $oldPrice ? $fmt($oldPrice) : '' }}" data-img="{{ $product->cover_url }}" data-href="{{ $product->url }}" data-brand="{{ $product->brand?->name }}">

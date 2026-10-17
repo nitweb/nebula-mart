@@ -47,7 +47,6 @@
           if (b = e.target.closest('.qv')) { var d = b.dataset; qv.querySelector('#qv-img').src = d.img; qv.querySelector('#qv-img').alt = d.name; qv.querySelector('#qv-name').textContent = d.name; qv.querySelector('#qv-price').textContent = d.price; qv.querySelector('#qv-old').textContent = d.old; qv.querySelector('#qv-old').parentElement.classList.toggle('hidden', !d.old); qv.querySelector('#qv-link').href = d.href; var qc = qv.querySelector('#qv-cat'), qa = b.closest('article'), qe = qa && qa.querySelector('p.text-xs'); qc.textContent = qe ? qe.textContent.trim() : ''; qc.hidden = !qc.textContent; var qd = qv.querySelector('#qv-desc'); qd.textContent = d.desc || ''; qd.hidden = !d.desc; qv.classList.remove('hidden') }
           else if (e.target.closest('[data-close-qv]')) cq();
           
-          else if (b = e.target.closest('.wish')) { var on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on); b.classList.toggle('bg-primary', on); b.classList.toggle('text-white', on); toast(on ? 'Saved to wishlist' : 'Removed from wishlist') }
         });
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cq() })
       })();

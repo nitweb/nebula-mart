@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -24,8 +25,7 @@ class TrackController extends Controller
         $number = strtoupper(preg_replace('/\s+/', '', (string) $request->input('order_number')));
         $number = preg_match('/^\d+$/', $number) ? 'NM-'.$number : $number;
 
-        $phone = preg_replace('/[\s\-]+/', '', (string) $request->input('phone'));
-        $phone = preg_replace('/^(\+?88)(?=01)/', '', $phone);
+        $phone = User::normalizePhone($request->input('phone'));
 
         $order = Order::query()
             ->with('events')

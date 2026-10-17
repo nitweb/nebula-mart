@@ -22,8 +22,13 @@ class CheckoutController extends Controller
             return $redirect;
         }
 
+        $user = auth()->user();
+        $addresses = $user ? $user->addresses()->get() : collect();
+
         return view('frontend.checkout.index', [
-            'user' => auth()->user(),
+            'user' => $user,
+            'addresses' => $addresses,
+            'prefill' => $addresses->first(),
         ]);
     }
 

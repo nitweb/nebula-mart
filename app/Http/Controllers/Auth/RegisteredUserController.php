@@ -8,8 +8,6 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -20,7 +18,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        return view('frontend.auth.register');
     }
 
     /**
@@ -30,22 +28,38 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        $request->merge([
+            'phone' => User::normalizePhone($request->input('phone')),
+            'email' => strtolower(trim((string) $request->input('email'))),
+        ]);
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:100'],
+            'phone' => ['required', 'regex:/^01[3-9][0-9]{8}$/', 'unique:users,phone'],
+            'email' => ['required', 'email', 'max:150', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'max:100'],
+            'terms' => ['accepted'],
+        ], [
+            'phone.regex' => 'Enter a valid mobile number, like 01XXXXXXXXX.',
+            'phone.unique' => 'This mobile number already has an account. Please sign in.',
+            'email.unique' => 'This email address is already used by another account.',
+            'terms.accepted' => 'Please accept the terms to create your account.',
+        ], [
+            'phone' => 'mobile number',
+            'email' => 'email address',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => trim($data['name']),
+            'phone' => $data['phone'],
+            'email' => $data['email'],
+            'password' => $data['password'],
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->intended(route('account.index', absolute: false));
     }
 }

@@ -92,6 +92,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/refresh.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/extras.css') }}?v={{ filemtime(public_path('assets/frontend/css/pages/extras.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/frontend/css/pages/customer.css') }}?v={{ filemtime(public_path('assets/frontend/css/pages/customer.css')) }}">
     @if ($setting('ga_id'))
         <script async src="https://www.googletagmanager.com/gtag/js?id={{ $setting('ga_id') }}"></script>
         <script>
@@ -355,7 +356,16 @@
             }).showToast();
         };
     </script>
+    <script>
+        window.NEBULA_WISH = {
+            toggle: @json(route('account.wishlist.toggle')),
+            login: @json(route('login')),
+            guest: @json(! auth()->check()),
+            ids: @json($wishlistIds)
+        };
+    </script>
     <script src="{{ asset('assets/frontend/js/cart.js') }}?v={{ filemtime(public_path('assets/frontend/js/cart.js')) }}" defer></script>
+    <script src="{{ asset('assets/frontend/js/wishlist.js') }}?v={{ filemtime(public_path('assets/frontend/js/wishlist.js')) }}" defer></script>
     <script src="{{ asset('assets/frontend/js/loop-slider.js') }}" defer></script>
     <script src="{{ asset('assets/frontend/js/pages/electronics.js') }}" defer></script>
     <script>

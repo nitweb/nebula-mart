@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use App\Services\CheckoutService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -15,11 +16,8 @@ class CheckoutRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $phone = preg_replace('/[\s\-]+/', '', (string) $this->input('phone'));
-        $phone = preg_replace('/^(\+?88)(?=01)/', '', $phone);
-
         $this->merge([
-            'phone' => $phone,
+            'phone' => User::normalizePhone($this->input('phone')),
             'name' => trim((string) $this->input('name')),
             'email' => trim((string) $this->input('email')),
             'district' => trim((string) $this->input('district')),

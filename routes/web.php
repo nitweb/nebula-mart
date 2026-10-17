@@ -1,12 +1,17 @@
 <?php
 
+use App\Http\Controllers\Frontend\AccountController;
+use App\Http\Controllers\Frontend\AccountOrderController;
+use App\Http\Controllers\Frontend\AddressController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\FlashDealController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\ProductController as StorefrontProductController;
+use App\Http\Controllers\Frontend\ReviewController;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\Frontend\TrackController;
+use App\Http\Controllers\Frontend\WishlistController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,11 +42,34 @@ Route::get('/order/success/{number}', [CheckoutController::class, 'success'])->w
 Route::get('/track', [TrackController::class, 'show'])->name('track.show');
 Route::post('/track', [TrackController::class, 'lookup'])->name('track.lookup');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})
-    ->middleware(['auth', 'verified'])
+Route::get('/dashboard', fn () => to_route('account.index'))
+    ->middleware('auth')
     ->name('dashboard');
+
+Route::middleware('auth')->prefix('account')->as('account.')->group(function () {
+    Route::get('/', [AccountController::class, 'index'])->name('index');
+
+    Route::get('orders', [AccountOrderController::class, 'index'])->name('orders');
+    Route::get('orders/{number}', [AccountOrderController::class, 'show'])->where('number', 'NM-\d+')->name('orders.show');
+    Route::post('orders/{number}/reorder', [AccountOrderController::class, 'reorder'])->where('number', 'NM-\d+')->name('orders.reorder');
+
+    Route::get('profile', [AccountController::class, 'profile'])->name('profile');
+    Route::patch('profile', [AccountController::class, 'updateProfile'])->name('profile.update');
+    Route::put('password', [AccountController::class, 'updatePassword'])->name('password.update');
+
+    Route::get('addresses', [AddressController::class, 'index'])->name('addresses');
+    Route::post('addresses', [AddressController::class, 'store'])->name('addresses.store');
+    Route::patch('addresses/{address}', [AddressController::class, 'update'])->name('addresses.update');
+    Route::patch('addresses/{address}/default', [AddressController::class, 'default'])->name('addresses.default');
+    Route::delete('addresses/{address}', [AddressController::class, 'destroy'])->name('addresses.destroy');
+
+    Route::get('wishlist', [WishlistController::class, 'index'])->name('wishlist');
+    Route::post('wishlist/toggle', [WishlistController::class, 'toggle'])->middleware('throttle:120,1')->name('wishlist.toggle');
+
+    Route::get('reviews', [ReviewController::class, 'index'])->name('reviews');
+    Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::delete('reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

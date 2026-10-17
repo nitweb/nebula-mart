@@ -16,10 +16,20 @@
 
         </div>
 
-        <div class="p-4 grid grid-cols-2 gap-2">
-            <a href="login.html" class="text-center bg-ink text-white font-bold rounded-xl py-2.5">Sign in</a>
-            <a href="register.html" class="text-center bg-accent font-bold rounded-xl py-2.5">Register</a>
-        </div>
+        @auth
+            <div class="p-4 grid grid-cols-2 gap-2">
+                <a href="{{ route('account.index') }}" class="text-center bg-ink text-white font-bold rounded-xl py-2.5">My account</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full text-center bg-accent font-bold rounded-xl py-2.5">Sign out</button>
+                </form>
+            </div>
+        @else
+            <div class="p-4 grid grid-cols-2 gap-2">
+                <a href="{{ route('login') }}" class="text-center bg-ink text-white font-bold rounded-xl py-2.5">Sign in</a>
+                <a href="{{ route('register') }}" class="text-center bg-accent font-bold rounded-xl py-2.5">Register</a>
+            </div>
+        @endauth
 
         <ul class="px-4 pb-6 divide-y-2 divide-line font-bold">
 
@@ -46,7 +56,9 @@
 
             <li><a href="{{ route('track.show') }}" class="block py-3.5">Track order</a></li>
 
-            <li><a href="wishlist.html" class="block py-3.5">Wishlist</a></li>
+            <li><a href="{{ route('account.orders') }}" class="block py-3.5">My orders</a></li>
+
+            <li><a href="{{ route('account.wishlist') }}" class="block py-3.5">Wishlist</a></li>
 
             <li><a href="shop.html" class="block my-3 text-center bg-primary text-white rounded-xl py-3">Flash deals</a></li>
 

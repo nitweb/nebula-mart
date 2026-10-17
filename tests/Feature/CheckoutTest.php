@@ -225,3 +225,58 @@ it('creates an account for a guest at checkout and reuses it for the same email'
 
     expect(User::count())->toBe(1)->and(Order::where('user_id', $user->id)->count())->toBe(2);
 });
+
+it('reuses the account of the same mobile number even when the email is different', function () {
+    fillCart($this, checkoutProduct());
+    $this->post(route('checkout.store'), checkoutDetails());
+
+    fillCart($this, checkoutProduct());
+    $this->post(route('checkout.store'), checkoutDetails(['email' => 'rahim.new@example.com']));
+
+    $user = User::where('phone', '01711223344')->firstOrFail();
+
+    expect(User::count())->toBe(1)
+        ->and(Order::where('user_id', $user->id)->count())->toBe(2);
+    $this->assertGuest();
+});
+
+it('creates a second account without an email when the email already belongs to another customer', function () {
+    fillCart($this, checkoutProduct());
+    $this->post(route('checkout.store'), checkoutDetails());
+
+    fillCart($this, checkoutProduct());
+    $this->post(route('checkout.store'), checkoutDetails(['phone' => '01899887766']));
+
+    $second = User::where('phone', '01899887766')->firstOrFail();
+
+    expect(User::count())->toBe(2)
+        ->and($second->email)->toBeNull()
+        ->and(Order::where('user_id', $second->id)->count())->toBe(1);
+});
+
+it('tells a new guest how to sign in on the success page', function () {
+    fillCart($this, checkoutProduct());
+    $this->post(route('checkout.store'), checkoutDetails());
+    $order = Order::firstOrFail();
+
+    $this->get(route('checkout.success', $order->number))
+        ->assertOk()
+        ->assertSee('Your account is ready')
+        ->assertSee(Str::slug((string) Setting::get('store_name'), '').'3344');
+});
+
+it('keeps the delivery address in the address book of the customer', function () {
+    fillCart($this, checkoutProduct());
+    $this->post(route('checkout.store'), checkoutDetails());
+
+    $user = User::where('phone', '01711223344')->firstOrFail();
+
+    expect($user->addresses)->toHaveCount(1)
+        ->and($user->addresses->first()->is_default)->toBeTrue()
+        ->and($user->addresses->first()->district)->toBe('Dhaka');
+
+    fillCart($this, checkoutProduct());
+    $this->post(route('checkout.store'), checkoutDetails());
+
+    expect($user->addresses()->count())->toBe(1);
+});

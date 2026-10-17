@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Address;
 use App\Models\Coupon;
 use App\Models\FlashDealProduct;
 use App\Models\Order;
@@ -23,9 +24,10 @@ class CheckoutService
     public function __construct(private CartService $cart) {}
 
     /**
-     * Guests get an account from their checkout details; an existing account with the same email is reused
-     * (never logged in). The starting password is the store name followed by the last 4 digits of the mobile
-     * number, which the customer can change later.
+     * Guests get an account from their checkout details. The mobile number is the customer's identity: an
+     * account with the same number is reused (never logged in), so every order placed with that number ends
+     * up under one account. The starting password is the store name followed by the last 4 digits of the
+     * mobile number, which the customer can change later.
      *
      * @param  array{name: string, phone: string, email: string}  $data
      */
@@ -33,10 +35,60 @@ class CheckoutService
     {
         $email = Str::lower($data['email']);
 
-        return User::query()->where('email', $email)->first() ?? User::create([
+        if ($user = User::query()->where('phone', $data['phone'])->first()) {
+            return $user;
+        }
+
+        // An older account with this email that never had a number yet becomes the account for this number.
+        $byEmail = User::query()->where('email', $email)->first();
+
+        if ($byEmail && ! $byEmail->phone) {
+            $byEmail->update(['phone' => $data['phone']]);
+
+            return $byEmail;
+        }
+
+        session()->flash('new_account', true);
+
+        return User::create([
             'name' => $data['name'],
-            'email' => $email,
-            'password' => Str::slug((string) Setting::get('store_name'), '').substr($data['phone'], -4),
+            'phone' => $data['phone'],
+            // The email can already belong to a different customer; the order still keeps it.
+            'email' => $byEmail ? null : $email,
+            'password' => self::startingPassword($data['phone']),
+        ]);
+    }
+
+    /** The password every checkout-created account starts with. */
+    public static function startingPassword(string $phone): string
+    {
+        return Str::slug((string) Setting::get('store_name'), '').substr($phone, -4);
+    }
+
+    /** Keeps the delivery address in the customer's address book (the first one becomes the default). */
+    private function rememberAddress(int $userId, array $data): void
+    {
+        $book = Address::query()->where('user_id', $userId);
+
+        $known = (clone $book)
+            ->where('district', $data['district'])
+            ->where('area', $data['area'])
+            ->where('address', $data['address'])
+            ->exists();
+
+        if ($known || (clone $book)->count() >= Address::LIMIT) {
+            return;
+        }
+
+        Address::create([
+            'user_id' => $userId,
+            'label' => 'Home',
+            'name' => $data['name'],
+            'phone' => $data['phone'],
+            'district' => $data['district'],
+            'area' => $data['area'],
+            'address' => $data['address'],
+            'is_default' => ! (clone $book)->exists(),
         ]);
     }
 
@@ -172,6 +224,8 @@ class CheckoutService
             }
 
             OrderEvent::create(['order_id' => $order->id, 'status' => 'pending', 'note' => 'Order placed']);
+
+            $this->rememberAddress($userId, $data);
 
             if ($coupon && $couponCode) {
                 $coupon->redeem($userId, $discount, $order->id);

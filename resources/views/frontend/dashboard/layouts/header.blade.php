@@ -67,37 +67,48 @@
                 <div class="ml-auto lg:ml-0 flex items-center gap-1 sm:gap-2">
 
                     <!-- Account dropdown -->
+                    @php
+                        $customer = auth()->user();
+                    @endphp
                     <div class="drop relative hidden sm:block">
-                        <a href="account.html" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-primary-soft font-bold text-sm">
+                        <a href="{{ $customer ? route('account.index') : route('login') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-primary-soft font-bold text-sm">
                             <svg class="w-6 h-6">
                                 <use href="#i-user" />
                             </svg>
                             <span class="hidden xl:block leading-tight text-left">
-                                <span class="block text-[11px] font-medium text-ink/60">Hello, guest</span>
+                                <span class="block text-[11px] font-medium text-ink/60">Hello, {{ $customer ? \Illuminate\Support\Str::before($customer->name, ' ') : 'guest' }}</span>
                                 Account
                             </span>
                         </a>
                         <div class="drop-panel absolute right-0 top-full pt-2 w-60">
                             <div class="bg-white border border-line rounded-2xl shadow-sm p-3">
-                                <a href="login.html" class="block text-center bg-primary text-white font-bold rounded-xl py-2.5 hover:bg-primary-dark">Sign
-                                    in</a>
-                                <a href="register.html" class="block text-center mt-2 bg-accent text-ink font-bold rounded-xl py-2.5 hover:brightness-95">Create
-                                    account</a>
+                                @if ($customer)
+                                    <a href="{{ route('account.index') }}" class="block text-center bg-primary text-white font-bold rounded-xl py-2.5 hover:bg-primary-dark">My account</a>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="block w-full text-center mt-2 bg-accent text-ink font-bold rounded-xl py-2.5 hover:brightness-95">Sign out</button>
+                                    </form>
+                                @else
+                                    <a href="{{ route('login') }}" class="block text-center bg-primary text-white font-bold rounded-xl py-2.5 hover:bg-primary-dark">Sign
+                                        in</a>
+                                    <a href="{{ route('register') }}" class="block text-center mt-2 bg-accent text-ink font-bold rounded-xl py-2.5 hover:brightness-95">Create
+                                        account</a>
+                                @endif
                                 <div class="mt-3 pt-3 border-t-2 border-dashed border-line text-sm font-medium grid gap-1">
-                                    <a href="orders.html" class="px-2 py-1.5 rounded-lg hover:bg-primary-soft">My orders</a>
+                                    <a href="{{ route('account.orders') }}" class="px-2 py-1.5 rounded-lg hover:bg-primary-soft">My orders</a>
                                     <a href="{{ route('track.show') }}" class="px-2 py-1.5 rounded-lg hover:bg-primary-soft">Track a package</a>
-                                    <a href="addresses.html" class="px-2 py-1.5 rounded-lg hover:bg-primary-soft">Saved addresses</a>
+                                    <a href="{{ route('account.addresses') }}" class="px-2 py-1.5 rounded-lg hover:bg-primary-soft">Saved addresses</a>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Wishlist -->
-                    <a href="wishlist.html" class="relative p-2.5 rounded-xl hover:bg-primary-soft hidden sm:grid place-items-center" aria-label="Wishlist, 3 items">
+                    <a href="{{ route('account.wishlist') }}" class="relative p-2.5 rounded-xl hover:bg-primary-soft hidden sm:grid place-items-center" aria-label="Wishlist, {{ count($wishlistIds) }} {{ count($wishlistIds) === 1 ? 'item' : 'items' }}">
                         <svg class="w-6 h-6">
                             <use href="#i-heart" />
                         </svg>
-                        <span class="absolute top-0.5 right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-primary text-white text-[10px] font-bold grid place-items-center">3</span>
+                        <span data-wish-badge class="absolute top-0.5 right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-primary text-white text-[10px] font-bold grid place-items-center" @if (! count($wishlistIds)) hidden @endif>{{ count($wishlistIds) }}</span>
                     </a>
 
                     <!-- Cart -->

@@ -46,6 +46,18 @@
         </div>
     </section>
 
+    @if (session('new_account') && ! auth()->check())
+        <div class="max-w-7xl mx-auto px-4 lg:px-6 pt-8">
+            <div class="bg-white border border-line rounded-3xl p-6 lg:p-8 flex flex-wrap items-center gap-4 justify-between">
+                <div>
+                    <h2 class="font-display font-extrabold text-xl">Your account is ready</h2>
+                    <p class="mt-1 text-sm text-ink/75">Sign in with <b>{{ $order->phone }}</b> and the password <b>{{ \App\Services\CheckoutService::startingPassword($order->phone) }}</b> to see all your orders. You can change the password after signing in.</p>
+                </div>
+                <a href="{{ route('login') }}" class="inline-flex items-center justify-center bg-primary hover:bg-primary-dark text-white font-extrabold rounded-xl px-6 py-3 transition-colors">Sign in</a>
+            </div>
+        </div>
+    @endif
+
     <div class="max-w-7xl mx-auto px-4 lg:px-6 py-8">
         <ol class="flex items-center gap-3 max-w-xl bg-white border border-line rounded-2xl px-5 py-3" aria-label="Order progress">
             <li class="flex items-center gap-2"><span class="w-9 h-9 rounded-full border border-line grid place-items-center font-extrabold bg-accent">✓</span><span class="font-bold ">Cart</span></li>
