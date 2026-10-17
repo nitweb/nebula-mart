@@ -30,9 +30,7 @@ class AccountOrderController extends Controller
     {
         $order = $request->user()->customerOrders()->with(['items.product', 'events'])->where('number', $number)->firstOrFail();
 
-        $reviewed = $request->user()->reviews()->pluck('product_id')->all();
-
-        return view('frontend.account.order', ['order' => $order, 'reviewed' => $reviewed]);
+        return view('frontend.account.order', ['order' => $order]);
     }
 
     /** Puts every item of an earlier order back in the cart, skipping what cannot be sold any more. */

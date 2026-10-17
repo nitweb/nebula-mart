@@ -155,7 +155,7 @@
         </symbol>
 
         <symbol id="i-heart" viewBox="0 0 24 24">
-            <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+            <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" style="fill: var(--heart-fill, none)" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
         </symbol>
 
         <symbol id="i-chev" viewBox="0 0 24 24">

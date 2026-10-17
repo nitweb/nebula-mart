@@ -9,7 +9,6 @@
             ['account.orders', 'My orders', 'account.orders*'],
             ['account.wishlist', 'Wishlist', 'account.wishlist'],
             ['account.addresses', 'Saved addresses', 'account.addresses'],
-            ['account.reviews', 'My reviews', 'account.reviews'],
             ['account.profile', 'Profile & password', 'account.profile'],
         ];
     @endphp

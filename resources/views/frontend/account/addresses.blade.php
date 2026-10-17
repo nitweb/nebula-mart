@@ -8,17 +8,10 @@
     @php
         $card = 'bg-white border border-line rounded-3xl p-6 lg:p-8';
         $field = 'w-full rounded-xl border border-line px-4 py-3 bg-white focus:outline-none focus:shadow-md';
-        $districts = \App\Services\CheckoutService::districts();
         // Form values: what was just submitted for that form, otherwise what is saved.
         $val = fn (string $form, string $key, mixed $saved = '') => old('_form') === $form ? old($key) : $saved;
         $err = fn (string $form, string $key) => old('_form') === $form ? $errors->first($key) : '';
     @endphp
-
-    <datalist id="district-options">
-        @foreach ($districts as $district)
-            <option value="{{ $district }}"></option>
-        @endforeach
-    </datalist>
 
     <div class="grid gap-4">
         @forelse ($addresses as $address)
@@ -84,3 +77,7 @@
         @endif
     </div>
 @endsection
+
+@push('scripts')
+    <script src="{{ asset('assets/frontend/js/pages/address-picker.js') }}?v={{ filemtime(public_path('assets/frontend/js/pages/address-picker.js')) }}" defer></script>
+@endpush

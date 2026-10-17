@@ -36,7 +36,7 @@
                 <form id="auth-form" class="auth__form" method="POST" action="{{ route('login') }}" novalidate data-kind="login">
                     @csrf
                     <div class="fld"><label class="lbl" for="l-phone">Mobile number <i>*</i></label>
-                        <div class="fld__box fld__box--pre"><span class="ic ic-phone" aria-hidden="true"></span><span class="pre">+880</span><input id="l-phone" name="phone" type="tel" required placeholder="01XXXXXXXXX" autocomplete="username" inputmode="numeric" pattern="(\+?88)?01[3-9][0-9]{8}" title="Enter a valid Bangladeshi mobile number, e.g. 01712345678" value="{{ old('phone') }}" autofocus></div>
+                        <div class="fld__box fld__box--pre"><span class="ic ic-phone" aria-hidden="true"></span><span class="pre">+880</span><input id="l-phone" name="phone" type="tel" required placeholder="01XXXXXXXXX" autocomplete="username" inputmode="numeric" pattern="01[3-9][0-9]{8}" maxlength="18" title="Enter a valid Bangladeshi mobile number, e.g. 01712345678" value="{{ old('phone') }}" autofocus></div>
                         @error('phone')<p class="text-sm font-bold mt-1" style="color:#c0392b">{{ $message }}</p>@enderror
                     </div>
                     <div class="fld"><label class="lbl" for="l-pw">Password <i>*</i></label>

@@ -8,7 +8,6 @@ use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\FlashDealController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\ProductController as StorefrontProductController;
-use App\Http\Controllers\Frontend\ReviewController;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\Frontend\TrackController;
 use App\Http\Controllers\Frontend\WishlistController;
@@ -66,9 +65,6 @@ Route::middleware('auth')->prefix('account')->as('account.')->group(function () 
     Route::get('wishlist', [WishlistController::class, 'index'])->name('wishlist');
     Route::post('wishlist/toggle', [WishlistController::class, 'toggle'])->middleware('throttle:120,1')->name('wishlist.toggle');
 
-    Route::get('reviews', [ReviewController::class, 'index'])->name('reviews');
-    Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
-    Route::delete('reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 Route::middleware('auth')->group(function () {

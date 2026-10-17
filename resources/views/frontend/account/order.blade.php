@@ -52,9 +52,6 @@
                                 <p class="font-bold leading-snug">{{ $item->name }}</p>
                             @endif
                             <p class="text-sm text-ink/60">{{ $item->variant_label ? $item->variant_label.' · ' : '' }}Qty {{ $item->quantity }} × {{ $tk($item->unit_price) }}</p>
-                            @if ($order->status === 'delivered' && $item->product_id && ! in_array($item->product_id, $reviewed, true))
-                                <a href="{{ route('account.reviews') }}" class="text-sm font-bold underline underline-offset-4">Write a review</a>
-                            @endif
                         </div>
                         <p class="font-bold">{{ $tk($item->line_total) }}</p>
                     </li>
@@ -71,19 +68,30 @@
         </section>
 
         <div class="grid md:grid-cols-2 gap-4">
-            <section class="{{ $card }} !p-6" aria-labelledby="h-ship">
-                <h2 id="h-ship" class="font-display font-extrabold text-xl">Delivery address</h2>
-                <p class="mt-3 font-bold">{{ $order->name }}</p>
-                <p class="text-sm text-ink/70">{{ $order->full_address }}</p>
-                <p class="text-sm text-ink/70">{{ $order->phone }}</p>
-                @if ($order->note)
-                    <p class="mt-3 text-sm"><b>Note:</b> {{ $order->note }}</p>
-                @endif
+            <section class="{{ $card }} acct-info" aria-labelledby="h-ship">
+                <div class="acct-info__head">
+                    <span class="acct-info__ic"><span class="ic ic-pin" aria-hidden="true"></span></span>
+                    <h2 id="h-ship" class="font-display font-extrabold text-xl">Delivery address</h2>
+                </div>
+                <dl class="acct-info__list">
+                    <div><dt>Name</dt><dd>{{ $order->name }}</dd></div>
+                    <div><dt>Mobile</dt><dd>{{ $order->phone }}</dd></div>
+                    <div><dt>Address</dt><dd>{{ $order->full_address }}</dd></div>
+                    @if ($order->note)
+                        <div><dt>Note</dt><dd>{{ $order->note }}</dd></div>
+                    @endif
+                </dl>
             </section>
-            <section class="{{ $card }} !p-6" aria-labelledby="h-pay">
-                <h2 id="h-pay" class="font-display font-extrabold text-xl">Payment</h2>
-                <p class="mt-3 font-bold">{{ $order->payment_label }}</p>
-                <p class="text-sm text-ink/70">{{ ucfirst($order->payment_status) }}</p>
+            <section class="{{ $card }} acct-info" aria-labelledby="h-pay">
+                <div class="acct-info__head">
+                    <span class="acct-info__ic"><span class="ic ic-wallet" aria-hidden="true"></span></span>
+                    <h2 id="h-pay" class="font-display font-extrabold text-xl">Payment</h2>
+                </div>
+                <dl class="acct-info__list">
+                    <div><dt>Method</dt><dd>{{ $order->payment_label }}</dd></div>
+                    <div><dt>Status</dt><dd><span class="acct-badge" data-status="{{ $order->payment_status === 'paid' ? 'delivered' : 'pending' }}">{{ ucfirst($order->payment_status) }}</span></dd></div>
+                    <div><dt>Total</dt><dd>{{ $tk($order->total) }}</dd></div>
+                </dl>
             </section>
         </div>
     </div>

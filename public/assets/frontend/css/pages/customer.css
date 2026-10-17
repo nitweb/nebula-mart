@@ -83,3 +83,123 @@
 .fld__box--pre input {
     padding-left: 5.7rem
 }
+
+
+/* wishlist heart: red when saved */
+.wish[aria-pressed="true"] {
+    --heart-fill: currentColor;
+    background: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: #fff !important
+}
+
+.wish[aria-pressed="true"]:hover {
+    background: #dc2626 !important;
+    border-color: #dc2626 !important
+}
+
+/* order page: delivery address + payment cards */
+.acct-info {
+    padding: 1.5rem !important
+}
+
+main section.acct-info h2[id^="h-"]::before {
+    display: none
+}
+
+.acct-info__head {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgb(var(--color-line))
+}
+
+.acct-info__ic {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: .8rem;
+    background: rgb(var(--color-primary-soft));
+    color: rgb(var(--color-primary));
+    font-size: 1.15rem
+}
+
+.acct-info__list {
+    display: grid;
+    gap: .85rem;
+    margin-top: 1rem
+}
+
+.acct-info__list>div {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: .75rem;
+    align-items: baseline
+}
+
+.acct-info__list dt {
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: rgb(var(--color-ink) / .5)
+}
+
+.acct-info__list dd {
+    font-weight: 700;
+    line-height: 1.45;
+    overflow-wrap: anywhere
+}
+
+/* saved addresses: district / area pickers (same look as checkout) */
+.ap {
+    position: relative
+}
+
+.ap-list {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    z-index: 40;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid rgb(var(--color-line));
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+    padding: 4px
+}
+
+.ap-list[hidden] {
+    display: none
+}
+
+.ap-list li {
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px
+}
+
+.ap-list li small {
+    font-weight: 500;
+    opacity: .55
+}
+
+.ap-list li.on,
+.ap-list li:hover {
+    background: rgb(var(--color-primary-soft))
+}
+
+.ap input:disabled {
+    opacity: .6;
+    cursor: not-allowed
+}

@@ -257,33 +257,6 @@
             </div>
         </section>
 
-        @php
-            $reviewCount = $product->reviews()->count();
-            $reviewList = $reviewCount ? $product->reviews()->with('user:id,name')->limit(10)->get() : collect();
-            $reviewAverage = $reviewCount ? (float) $product->reviews()->avg('rating') : 0;
-        @endphp
-        <section id="reviews" class="mt-14" aria-labelledby="h-reviews">
-            <h2 id="h-reviews" class="font-display font-extrabold text-2xl mb-4">Customer reviews</h2>
-            @if ($reviewCount)
-                <p class="flex items-center gap-3 mb-5">
-                    <span class="font-display font-extrabold text-3xl">{{ number_format($reviewAverage, 1) }}</span>
-                    <span class="acct-stars" aria-hidden="true">{{ str_repeat('★', (int) round($reviewAverage)) }}<span>{{ str_repeat('★', 5 - (int) round($reviewAverage)) }}</span></span>
-                    <span class="text-sm text-ink/65">{{ $reviewCount }} {{ $reviewCount === 1 ? 'review' : 'reviews' }}</span>
-                </p>
-                <ul class="grid gap-4 max-w-3xl">
-                    @foreach ($reviewList as $review)
-                        <li class="bg-white border border-line rounded-2xl p-5">
-                            <p class="acct-stars" aria-label="{{ $review->rating }} out of 5">{{ str_repeat('★', $review->rating) }}<span>{{ str_repeat('★', 5 - $review->rating) }}</span></p>
-                            @if ($review->title)<p class="font-bold mt-1">{{ $review->title }}</p>@endif
-                            @if ($review->body)<p class="text-sm text-ink/80 mt-1">{{ $review->body }}</p>@endif
-                            <p class="text-xs text-ink/55 mt-2">{{ \Illuminate\Support\Str::before($review->user->name, ' ') }} · {{ $review->created_at->format('d M Y') }}</p>
-                        </li>
-                    @endforeach
-                </ul>
-            @else
-                <p class="text-ink/70">No reviews yet. Customers who received this product can review it from their account.</p>
-            @endif
-        </section>
 
         @if ($related->isNotEmpty())
             <section class="mt-14 mb-4" aria-labelledby="h-rel" style="padding-bottom: 4.75rem;">
