@@ -73,6 +73,8 @@ Route::middleware('auth:admin')
         // Coupon Routes
         Route::patch('coupons/{coupon}/toggle', [CouponController::class, 'toggle'])->name('coupons.toggle');
         Route::resource('coupons', CouponController::class)->except('show');
+        // Customer Routes
+        Route::get('customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('customers.index');
         // Order Routes
         Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
         Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');

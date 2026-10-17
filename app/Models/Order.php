@@ -19,6 +19,7 @@ class Order extends Model
         'pending' => 'Pending',
         'processing' => 'Processing',
         'shipped' => 'Shipped',
+        'out_for_delivery' => 'Out for delivery',
         'delivered' => 'Delivered',
         'cancelled' => 'Cancelled',
         'returned' => 'Returned',

@@ -64,7 +64,7 @@
             @endif
         </a>
 
-        <a href="customers.html" class="nav-link">
+        <a href="{{ route('admin.customers.index') }}" class="nav-link {{ request()->routeIs('admin.customers.*') ? 'active' : '' }}">
             <svg class="ic ">
                 <use href="#i-users" />
             </svg>

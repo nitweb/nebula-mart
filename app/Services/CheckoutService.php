@@ -9,8 +9,10 @@ use App\Models\OrderEvent;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Setting;
+use App\Models\User;
 use DomainException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * Turns the cart into an order. Prices, coupon, delivery fee and stock are all worked out again
@@ -19,6 +21,24 @@ use Illuminate\Support\Facades\DB;
 class CheckoutService
 {
     public function __construct(private CartService $cart) {}
+
+    /**
+     * Guests get an account from their checkout details; an existing account with the same email is reused
+     * (never logged in). The starting password is the store name followed by the last 4 digits of the mobile
+     * number, which the customer can change later.
+     *
+     * @param  array{name: string, phone: string, email: string}  $data
+     */
+    private function accountFor(array $data): User
+    {
+        $email = Str::lower($data['email']);
+
+        return User::query()->where('email', $email)->first() ?? User::create([
+            'name' => $data['name'],
+            'email' => $email,
+            'password' => Str::slug((string) Setting::get('store_name'), '').substr($data['phone'], -4),
+        ]);
+    }
 
     /** @return list<string> every district a customer can pick */
     public static function districts(): array
@@ -90,7 +110,7 @@ class CheckoutService
             throw new DomainException('Your cart is empty.');
         }
 
-        $userId = auth()->id();
+        $userId = auth()->id() ?? $this->accountFor($data)->id;
 
         $order = DB::transaction(function () use ($data, $summary, $zone, $userId) {
             $this->takeStock($summary['items']);

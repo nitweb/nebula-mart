@@ -85,7 +85,7 @@
                                     account</a>
                                 <div class="mt-3 pt-3 border-t-2 border-dashed border-line text-sm font-medium grid gap-1">
                                     <a href="orders.html" class="px-2 py-1.5 rounded-lg hover:bg-primary-soft">My orders</a>
-                                    <a href="track.html" class="px-2 py-1.5 rounded-lg hover:bg-primary-soft">Track a package</a>
+                                    <a href="{{ route('track.show') }}" class="px-2 py-1.5 rounded-lg hover:bg-primary-soft">Track a package</a>
                                     <a href="addresses.html" class="px-2 py-1.5 rounded-lg hover:bg-primary-soft">Saved addresses</a>
                                 </div>
                             </div>
@@ -196,7 +196,7 @@
                 @endforeach
 
                 <li class="ml-auto">
-                    <a href="track.html" class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-[15px] border-2 border-line hover:border-primary hover:text-primary hover:bg-primary-soft transition-colors">
+                    <a href="{{ route('track.show') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-[15px] border-2 border-line hover:border-primary hover:text-primary hover:bg-primary-soft transition-colors">
                         <svg viewBox="0 0 24 24" class="w-5 h-5" aria-hidden="true">
                             <path fill="currentColor" d="M3 7h11v8H3zM14 10h4l3 3v2h-7z" />
                             <circle cx="7" cy="17" r="2" fill="currentColor" />

@@ -3,7 +3,7 @@
 @section('admin_contents')
 
     @php
-        $badges = ['pending' => 'b-warn', 'processing' => 'b-info', 'shipped' => 'b-purple', 'delivered' => 'b-success', 'cancelled' => 'b-danger', 'returned' => 'b-muted'];
+        $badges = ['pending' => 'b-warn', 'processing' => 'b-info', 'shipped' => 'b-purple', 'out_for_delivery' => 'b-info', 'delivered' => 'b-success', 'cancelled' => 'b-danger', 'returned' => 'b-muted'];
         $events = $order->events;
         $lastEvent = $events->last();
     @endphp

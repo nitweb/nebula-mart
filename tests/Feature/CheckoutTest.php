@@ -6,6 +6,8 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 function checkoutProduct(array $attributes = []): Product
 {
@@ -189,4 +191,37 @@ it('lets an admin move an order along and puts the stock back when it is cancell
 
     $this->patch(route('admin.orders.update', $cancelled), ['status' => 'pending'])->assertSessionHas('error');
     expect($cancelled->fresh()->status)->toBe('cancelled');
+});
+
+it('tracks an order only when the order number and mobile number both match', function () {
+    fillCart($this, checkoutProduct());
+    $this->post(route('checkout.store'), checkoutDetails());
+    $order = Order::firstOrFail();
+
+    $this->get(route('track.show'))->assertOk()->assertSee('Track order');
+
+    $this->post(route('track.lookup'), ['order_number' => $order->number, 'phone' => '+8801711223344'])
+        ->assertOk()->assertSee('Order placed')->assertSee($order->number);
+
+    $this->post(route('track.lookup'), ['order_number' => $order->number, 'phone' => '01799999999'])
+        ->assertOk()->assertSee('We could not find that order');
+
+    $this->post(route('track.lookup'), ['order_number' => $order->number])->assertSessionHasErrors('phone');
+});
+
+it('creates an account for a guest at checkout and reuses it for the same email', function () {
+    fillCart($this, checkoutProduct());
+    $this->post(route('checkout.store'), checkoutDetails());
+
+    $user = User::where('email', 'rahim@example.com')->firstOrFail();
+    $expected = Str::slug((string) Setting::get('store_name'), '').'3344';
+
+    expect(Hash::check($expected, $user->password))->toBeTrue()
+        ->and(Order::firstOrFail()->user_id)->toBe($user->id);
+    $this->assertGuest();
+
+    fillCart($this, checkoutProduct());
+    $this->post(route('checkout.store'), checkoutDetails());
+
+    expect(User::count())->toBe(1)->and(Order::where('user_id', $user->id)->count())->toBe(2);
 });

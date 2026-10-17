@@ -44,7 +44,7 @@
                 @endif
             @endforeach
 
-            <li><a href="track.html" class="block py-3.5">Track order</a></li>
+            <li><a href="{{ route('track.show') }}" class="block py-3.5">Track order</a></li>
 
             <li><a href="wishlist.html" class="block py-3.5">Wishlist</a></li>
 

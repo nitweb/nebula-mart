@@ -19,6 +19,7 @@
             'pending' => 1,
             'processing' => 2,
             'shipped' => 3,
+            'out_for_delivery' => 3,
             'delivered' => 4,
             default => 1,
         };
